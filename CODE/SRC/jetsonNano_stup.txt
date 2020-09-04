@@ -1,0 +1,99 @@
+- UserAccounts - auto login on
+- Brightness & Lock - Turn screen off Never
+			- Require password  Space out box
+
+
+#######
+######update & upgrade
+sudo apt-get update && sudo apt-get upgrade -y
+
+
+#######
+###### Activate pwm Fan
+sudo sh -c 'echo 255 > /sys/devices/pwm-fan/target_pwm'
+
+
+######
+##### fan automatic
+#https://github.com/Pyrestone/jetson-fan-ctl
+git clone https://github.com/Pyrestone/jetson-fan-ctl.git
+cd jetson-fan-ctl
+sudo ./install.sh
+
+
+#######
+######system-level dependencies
+sudo apt-get install git cmake -y
+sudo apt-get install libatlas-base-dev gfortran -y
+sudo apt-get install libhdf5-serial-dev hdf5-tools -y
+sudo apt-get install python3-dev -y
+sudo apt-get install nano locate -y
+
+sudo apt-get install libfreetype6-dev python3-setuptools -y
+sudo apt-get install protobuf-compiler libprotobuf-dev openssl -y
+sudo apt-get install libssl-dev libcurl4-openssl-dev -y
+sudo apt-get install cython3 -y
+
+sudo apt-get install libxml2-dev libxslt1-dev -y
+
+
+#######
+######remote control - vnc
+sudo nano /usr/share/glib-2.0/schemas/org.gnome.Vino.gschema.xml
+
+     # paste into opened xml file
+	<key name='enabled' type='b'>
+	<summary>Enable remote access to the desktop</summary>
+	<description>
+	If true, allows remote access to the desktop via the RFB
+	protocol. Users on remote machines may then connect to the
+	desktop using a VNC viewer.
+	</description>
+	<default>true</default>
+	</key>
+
+      #save and exit	
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas
+# open "desktop sharing" and
+#Tick the “Allow other users to view your desktop” and “Allow other users to control your desktop”
+#Check “You must confirm each access to this machine” is turned off. 
+#Tick the “Require the user to enter this password” checkmark, and enter a password for the VNC session.
+# open "Startup Applications"
+# "Add"
+# Name box = Vino
+# Command box = /usr/lib/vino/vino-server &
+# save
+gsettings set org.gnome.Vino require-encryption false
+gsettings set org.gnome.Vino prompt-enabled false
+# Reboot
+
+
+#######
+###### get pip
+wget https://bootstrap.pypa.io/get-pip.py
+sudo python3 get-pip.py
+rm get-pip.py
+
+
+#######
+###### install numpy
+pip install numpy
+
+
+#######
+###### install opencv 4.4
+# first add more swap memory
+https://pysource.com/2019/08/26/install-opencv-4-1-on-nvidia-jetson-nano/
+# https://github.com/mdegans/nano_build_opencv
+git clone https://github.com/mdegans/nano_build_opencv.git
+cd nano_build_opencv
+# change build_opencv.sh to .txt
+# change JOBS parameter to =4
+# save, exit 
+# change build_opencv.txt to .sh
+./build_opencv.sh
+
+
+#######
+###### mavlik & dronekit
+http://brisbaneroboticsclub.id.au/connect-nvidia-nano-to-pixhawk/
