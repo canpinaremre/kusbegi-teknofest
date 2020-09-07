@@ -186,26 +186,29 @@ class Kusbegi:
         print(self.vehicle.mode)
         print("LANDING")
         
-    # düzelt
     def wait_for_land(self):
         while True:
+            print ("Landing...")
             if (self.state_on_ground == True):
                 break
-
+            sleep(1)       
         return True
 
     # düzelt
     def start_drive(self):
         # a thread to send messages
+        #Benim thread koduma bakılabilir
         self.msg_thread = threading.Thread(target=self.send_message)
         self.msg_thread.start()
         print("Burkut setpoint buffer thread activated")
 
     def stop(self):
+        #Dangerous method to stop ofboard thread!
         self.should_stop_thread = True
 
     #Düzelt -- Log basma ve buffer temizleme bu fonksiyona eklenecek
     def print_status(self):
+        #Elif utility.py bekleniyor
         #   Display basic vehicle state
         print (" Type: %s" % self.vehicle._vehicle_type)
         print (" Armed: %s" % self.vehicle.armed)
@@ -214,6 +217,7 @@ class Kusbegi:
         print (" Alt: %s" % self.vehicle.location.global_relative_frame.alt)
 
     def ready_to_takeoff(self):
+        #Get ready to take off!
         self.drive_type = self.drive_w_setpnt
         self.print_status()
         self.start_drive()
@@ -258,6 +262,8 @@ class Kusbegi:
     #Düzelt
     def wait_for_circle(self,bottomCoordinates,radius,yaw_bottom_to_top):
         #Math!
+        self.go_to_location(bottomCoordinates)
+        
         while (True):
             self.req_pos_x = self.pos_x
 
@@ -272,6 +278,12 @@ class Kusbegi:
         else:
             radius = self.calculate_distance(bottomCoordinates,topCoordinates,yaw_bottom_to_top)
             self.wait_for_circle(bottomCoordinates,radius)
+
+        return True
+
+    def save_coordinate(self,file_name):
+        #For script to save coorinates and yaw
+        #Elifin utility.py bekleniyor
 
         return True
 

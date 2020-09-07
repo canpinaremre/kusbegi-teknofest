@@ -105,9 +105,7 @@ drone.go_to_location(MISSION_COORDINATE_FINISH)
 drone.mode_land()
 
 #Wait for Landed
-while not drone.state_on_ground:
-    print ("Landing...")
-    sleep(1)
+drone.wait_for_land()
     
 print("Landed!")
 drone.print_status()
