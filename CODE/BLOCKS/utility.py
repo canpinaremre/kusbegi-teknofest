@@ -19,7 +19,6 @@ class Coordinate_File:
         return lat, lon, yaw
 
 class Log:
-    
     def __init__(self):
         self.log1 = deque()
         self.file_name = self.create_file_w_date()
@@ -35,11 +34,11 @@ class Log:
 
     def create_file_name_date(self):
         date_today = datetime.now()
-        date_today_st = str(date_today.day) + "-" + str(date_today.month) + "-" + str(date_today.year) + "/" + str(date_today.hour)+ ":" + str(date_today.min)
+        date_today_st = str(date_today.day) + "-" + str(date_today.month) + "-" + str(date_today.year) + "-" + str(date_today.hour)+ "-" + str(date_today.minute)
         return date_today_st
 
     def create_file_w_date(self):
-        file_name_date = create_file_name_date()
+        file_name_date = self.create_file_name_date()
         file_name1 = file_name_date + ".txt"
         file_date = open(file_name1, "w+")
         file_date.close()
