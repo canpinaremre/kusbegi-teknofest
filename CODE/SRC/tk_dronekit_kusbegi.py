@@ -286,10 +286,6 @@ class Kusbegi:
         ts_yaw = yaw_bottom_to_top + math.pi/2
         self.go_to_location(x,y,self.default_alt,ts_yaw,self.frame_global_relative_alt)
 
-        #Düzelt
-        sleep(2)
-        print("Salakça uyuyorum")
-
         self.drive_type = self.drive_w_setpnt
         self.position_frame = self.frame_local_ned
         self.req_pos_x = self.pos_x
