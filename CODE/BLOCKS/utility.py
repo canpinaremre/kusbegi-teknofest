@@ -18,32 +18,32 @@ class Coordinate_File:
         file.close()
         return lat, lon, yaw
 
-class Create_File:
-    def create_file_name_date():
-        date_today = datetime.now()
-        date_today_st = str(date_today.day) + "-" + str(date_today.month) + "-" + str(date_today.year)
-        return date_today_st
-
-    def create_file_w_date():
-        file_name_date = create_file_name_date()
-        file_name = file_name_date + ".txt "
-        file_date = open(file_name, "w+")
-        file_date.close()
-        return file_name
-
 class Log:
+    
     def __init__(self):
         self.log1 = deque()
-        self.file_name = None
+        self.file_name = self.create_file_w_date()
     
     def logger(self,log):
         self.log1.append(log)
 
-    def write_logs(self, log):
+    def write_logs(self):
         file_date = open(self.file_name, "a")
-        file_date.write('\n'.join(log) + '\n')
+        file_date.write('\n'.join(self.log1) + '\n')
         file_date.close()
-        log.clear()
+        self.log1.clear()
+
+    def create_file_name_date(self):
+        date_today = datetime.now()
+        date_today_st = str(date_today.day) + "-" + str(date_today.month) + "-" + str(date_today.year) + "/" + str(date_today.hour)+ ":" + str(date_today.min)
+        return date_today_st
+
+    def create_file_w_date(self):
+        file_name_date = create_file_name_date()
+        file_name1 = file_name_date + ".txt"
+        file_date = open(file_name1, "w+")
+        file_date.close()
+        return file_name1
 
 class Water_Motor:
     def init():
