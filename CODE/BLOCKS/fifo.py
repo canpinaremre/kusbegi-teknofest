@@ -18,6 +18,7 @@ def write_logs (file_name_txt, log):
     file_date = open(file_name_txt, "a")
     file_date.write('\n'.join(log) + '\n')
     file_date.close()
+    log.clear()
 
 if __name__ == '__main__':
     a = create_file_w_date()
@@ -33,6 +34,5 @@ if __name__ == '__main__':
     log1.append('ucuyor')
     log1.append('birinci olucaz')
     write_logs(a,log1)
-    log1 = deque()
-    log1.append('birinci olcaz mi?')
+
     print (log1)
