@@ -1,3 +1,7 @@
+from datetime import datetime
+import queue
+from collections import deque
+
 class Coordinate_File:
     def write_coordinates(file_path, lat, lon, yaw):
         file = open(file_path, 'w')
@@ -28,8 +32,15 @@ class Create_File:
         return file_name
 
 class Log:
-    def write_logs(file_name_txt, log):
-        file_date = open(file_name_txt, "a")
+    def __init__(self):
+        self.log1 = deque()
+        self.file_name = None
+    
+    def logger(self,log):
+        self.log1.append(log)
+
+    def write_logs(self, log):
+        file_date = open(self.file_name, "a")
         file_date.write('\n'.join(log) + '\n')
         file_date.close()
         log.clear()
