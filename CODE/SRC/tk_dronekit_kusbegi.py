@@ -29,7 +29,8 @@ class Kusbegi:
         # self.batt_lvl_critical =  # ??????
         # self.batt_volt_critical =  # ?????
 
-        self.distance_tolerance = 0.5 #meter
+        self.distance_tolerance = 1 #meter
+        self.distance_tolerance_global = self.distance_tolerance / 1.113195e5
         self.circle_step_magnitude = 0.001
 
         self.spd_x = 0.0
@@ -228,7 +229,6 @@ class Kusbegi:
         self.print_status()
         return True
 
-    #düzelt
     def go_to_location(self,xTarget,yTarget,altTarget,yaw,frame):
         #Go to location with frame type and wait for it
         self.position_frame = frame
@@ -237,38 +237,44 @@ class Kusbegi:
         self.req_pos_z = altTarget
         self.req_yaw_ang = yaw
 
-        while not (at_the_target_yet()):
-            sleep(1)
-
+        if (frame == self.frame_global_relative_alt):
+            while not (self.at_the_target_yet_global(xTarget,yTarget)):
+                sleep(1)
+        
+        if (frame == self.frame_local_ned):
+            while not (self.at_the_target_yet_ned(xTarget,yTarget)):
+                sleep(1)
+        
         return True
-
     
+    def get_distance_metres(aLocation1, aLocation2):
+        #Global locaiton meters
+        dlat = aLocation2.lat - aLocation1.lat
+        dlong = aLocation2.lon - aLocation1.lon
+        return math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
+
     def body_to_ned_frame(self,xBody,yBody,yawBody):
         xNed =  (xBody * math.cos(yawBody) ) - ( yBody * math.sin(yawBody) )
         yNed =  (xBody * math.sin(yawBody) ) + ( yBody * math.cos(yawBody) )
         return xNed,yNed
 
-    #düzelt
-    def at_the_target_yet(self,xTarget,yTarget,zTarget):
-        xTarget,yTarget = self.bodyToNedFrame(xTarget,yTarget,self.home_yaw)
-        zTarget = -zTarget
+    def at_the_target_yet_global(self,xTarget,yTarget):
 
-        north = self.vehicle.location.local_frame.north
-        east = self.vehicle.location.local_frame.east
-        down = self.vehicle.location.local_frame.down
-        if (abs(xTarget-north) < self.distance_tolerance):
-            if(abs(yTarget-east) < self.distance_tolerance):
-                if (abs(zTarget-down) < self.distance_tolerance):
-                    print("Target point reached")#add x y z
-                    return True
+        if (abs(xTarget-self.vehicle.location.global_relative_frame) < self.distance_tolerance_global):
+            if(abs(yTarget-self.vehicle.location.global_relative_frame) < self.distance_tolerance_global):
+                print("Target point reached")
+                return True
         print("Not at target yet")
         return False
-    
-    #Düzelt
-    def calculate_distance(self,globalCoordinates1,globalCoordinates2):
-        #This will return the distance of 2 global coordiante in meters
-        #Math!
-        return True
+
+    def at_the_target_yet_ned(self,xTarget,yTarget):
+
+        if (abs(xTarget-self.pos_x) < self.distance_tolerance):
+            if(abs(yTarget-self.pos_y) < self.distance_tolerance):
+                print("Target point reached")#add x y z
+                return True
+        print("Not at target yet")
+        return False
 
     #Düzelt
     def wait_for_circle(self,bottomCoordinates,radius,yaw_bottom_to_top):
@@ -301,7 +307,7 @@ class Kusbegi:
         while (alfa < 360):
             sleep(0.01)
             alfa = alfa + self.circle_step_magnitude
-            x_ned, y_ned = body_to_ned_frame( (ts_x - (radius*math.sin(alfa)/2)),(ts_y + radius/2 - radius*math.cos(alfa)/2) ,yaw_bottom_to_top)
+            x_ned, y_ned = body_to_ned_frame( (ts_x - (radius*math.sin(alfa)/2)),(ts_y + radius/2 - radius*math.cos(alfa)/2) ,yaw_bottom_to_top )
             self.req_pos_x = x_ned
             self.req_pos_y = y_ned
             self.req_pos_z = self.default_alt
