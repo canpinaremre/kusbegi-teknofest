@@ -57,6 +57,7 @@ MISSION_COORDINATE_RALLY4 = 'tk_g1_rally4.txt' #txt file for coordiantes
 
 #Start of Mission
 #
+drone.default_alt = MISSION_ALTITUDE
 
 drone.ready_to_takeoff()
 

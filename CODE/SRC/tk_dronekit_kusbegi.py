@@ -13,6 +13,7 @@ class Kusbegi:
         self.vehicle = None
         self.loc_home = None
         self.home_yaw = None
+        self.default_alt = None
 
         self.pos_x = 0.0
         self.pos_y = 0.0
@@ -29,6 +30,7 @@ class Kusbegi:
         # self.batt_volt_critical =  # ?????
 
         self.distance_tolerance = 0.5 #meter
+        self.circle_step_magnitude = 0.001
 
         self.spd_x = 0.0
         self.spd_y = 0.0
@@ -46,7 +48,7 @@ class Kusbegi:
         self.drive_w_setpnt = 0b101111111000
         self.frame_local_ned = mavutil.mavlink.MAV_FRAME_LOCAL_NED
         self.frame_global_relative_alt = mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT
-        self.frame_global = mavutil.mavlink.MAV_FRAME_GLOBAL
+        #self.frame_global = mavutil.mavlink.MAV_FRAME_GLOBAL
         
         self.drive_type = self.drive_w_setpnt
         self.position_frame = self.frame_local_ned
@@ -227,7 +229,16 @@ class Kusbegi:
         return True
 
     #düzelt
-    def go_to_location(xTarget,yTarget,altTarget):
+    def go_to_location(self,xTarget,yTarget,altTarget,yaw,frame):
+        #Go to location with frame type and wait for it
+        self.position_frame = frame
+        self.req_pos_x = xTarget
+        self.req_pos_y = yTarget
+        self.req_pos_z = altTarget
+        self.req_yaw_ang = yaw
+
+        while not (at_the_target_yet()):
+            sleep(1)
 
         return True
 
@@ -262,12 +273,41 @@ class Kusbegi:
     #Düzelt
     def wait_for_circle(self,bottomCoordinates,radius,yaw_bottom_to_top):
         #Math!
-        self.go_to_location(bottomCoordinates)
         
-        while (True):
-            self.req_pos_x = self.pos_x
+        x,y = 0,0 #Elif utilt.py
 
-            if(False):
+
+        ts_yaw = yaw_bottom_to_top + math.pi/2
+        self.go_to_location(x,y,self.default_alt,ts_yaw,self.frame_global_relative_alt)
+
+        #Düzelt
+        sleep(2)
+        print("Salakça uyuyorum")
+
+        self.drive_type = self.drive_w_setpnt
+        self.position_frame = self.frame_local_ned
+        self.req_pos_x = self.pos_x
+        self.req_pos_y = self.pos_y
+        self.req_pos_z = self.default_alt
+
+        ts_x = self.pos_x
+        ts_y = self.pos_y
+        ts_z = self.default_alt
+        
+
+
+        alfa = 0
+
+        while (alfa < 360):
+            sleep(0.01)
+            alfa = alfa + self.circle_step_magnitude
+            x_ned, y_ned = body_to_ned_frame( (ts_x - (radius*math.sin(alfa)/2)),(ts_y + radius/2 - radius*math.cos(alfa)/2) ,yaw_bottom_to_top)
+            self.req_pos_x = x_ned
+            self.req_pos_y = y_ned
+            self.req_pos_z = self.default_alt
+            self.req_yaw_ang = ts_yaw + math.pi/2 - alfa
+
+            if(alfa >= 360):
                 break
         return True
 
