@@ -11,10 +11,10 @@ import math
 #
 drone = Kusbegi()
 drone.connection_string = '127.0.0.1:14540'
-drone.connect_vehicle()
+if not (drone.connect_vehicle()):
+    exit()
 #
 #End of Create drone
-
 
 
 #Listeners
@@ -41,7 +41,6 @@ def listener(self, name, home_position):
 #
 MISSION_ALTITUDE = -10 #Down (meters)
 MISSION_CIRCLE_RADIUS = 8 #Meters
-MISSION_CIRCLE_YAW_BOTTOM_TO_TOP = 1 #Radians
 MISSION_COORDINATE_HOME = 'tk_g1_home.txt' #txt file for coordiantes
 MISSION_COORDINATE_FINISH = 'tk_g1_finish.txt' #txt file for coordiantes
 MISSION_COORDINATE_RALLY1 = 'tk_g1_rally1.txt' #txt file for coordiantes
@@ -61,55 +60,49 @@ drone.default_alt = MISSION_ALTITUDE
 
 drone.ready_to_takeoff()
 
-drone.print_status()
-
 drone.mode_takeoff(MISSION_ALTITUDE) #Takeoff to MISSION_ALTITUDE
 
 #Loop
 #
 for i in range(2):
     #Mission needs 2 tour
-
-    drone.print_status()
+    drone.log.logger("Tour "+ str(i+1) + " started")
 
     #First go straight and pass start/finish line
-    drone.go_to_location(MISSION_COORDINATE_FINISH)
+    drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
 
-    drone.go_to_location(MISSION_COORDINATE_RALLY1)
+    drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
     #These can be done more otonom by only 1 rally point and radius value
-    drone.go_to_location(MISSION_COORDINATE_RALLY2)
+    drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
     
     #First go to circle then do circle
-    drone.go_to_location(MISSION_COORDINATE_BOTTOM_OF_CIRCLE)
+    drone.go_to_coordinate(MISSION_COORDINATE_BOTTOM_OF_CIRCLE)
 
     drone.do_circle(MISSION_COORDINATE_BOTTOM_OF_CIRCLE,
         MISSION_COORDINATE_TOP_OF_CIRCLE,#If MISSION_CIRCLE_RADIUS != 0 then use MISSION_CIRCLE_RADIUS
         MISSION_CIRCLE_RADIUS,#If MISSION_CIRCLE_RADIUS = 0 then use MISSION_COORDINATE_TOP_OF_CIRCLE
-        MISSION_CIRCLE_YAW_BOTTOM_TO_TOP
+        MISSION_COORDINATE_HOME #Send home position for yaw calculation
         )
 
 
-    drone.go_to_location(MISSION_COORDINATE_RALLY3)
+    drone.go_to_coordinate(MISSION_COORDINATE_RALLY3)
     #These can be done more otonom by only 1 rally point and radius value
-    drone.go_to_location(MISSION_COORDINATE_RALLY4)
+    drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
 
-    drone.go_to_location(MISSION_COORDINATE_HOME)
+    drone.go_to_coordinate(MISSION_COORDINATE_HOME)
 
     
 #
 #End of Loop
 
 #Go to start/finish line
-drone.go_to_location(MISSION_COORDINATE_FINISH)
+drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
 
 #Start Land
 drone.mode_land()
 
 #Wait for Landed
 drone.wait_for_land()
-    
-print("Landed!")
-drone.print_status()
 
 #Disarm
 drone.disarm()

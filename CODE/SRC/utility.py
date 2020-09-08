@@ -4,8 +4,7 @@ from collections import deque
 
 class CoordinateFile:
     def __init__(self):
-        self.file_dir_write = None
-        self.file_dir_read = None
+        self.file_dir = None
 
     def write_coordinates(self, lat, lon, yaw, file_path=self.file_dir):
         file = open(file_path, 'w')
@@ -14,7 +13,7 @@ class CoordinateFile:
         file.write(str(yaw))
         file.close()
 
-    def read_coordinates(self, file_path=self.file_dir_read):
+    def read_coordinates(self, file_path=self.file_dir):
         file = open(file_path, 'r')
         lat = float(file.readline())
         lon = float(file.readline())
@@ -29,7 +28,7 @@ class Log:
         self.file_name = self.create_file_w_date()
 
     def logger(self, log):
-        self.log1.append(log)
+        self.log1.append(str(datetime.now().hour) + ":" + str(datetime.now().minute) + ":"+ str(datetime.now().second) + "- " + log)
 
     def write_logs(self):
         file_date = open(self.file_name, "a")
