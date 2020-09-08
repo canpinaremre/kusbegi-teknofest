@@ -2,15 +2,19 @@ from datetime import datetime
 import queue
 from collections import deque
 
-class Coordinate_File:
-    def write_coordinates(file_path, lat, lon, yaw):
+class CoordinateFile:
+    def __init__(self):
+        self.file_dir_write = None
+        self.file_dir_read = None
+
+    def write_coordinates(self, lat, lon, yaw, file_path=self.file_dir):
         file = open(file_path, 'w')
         file.write(str(lat) + "\n")
         file.write(str(lon) + "\n")
         file.write(str(yaw))
         file.close()
 
-    def read_coordinates(file_path):
+    def read_coordinates(self, file_path=self.file_dir_read):
         file = open(file_path, 'r')
         lat = float(file.readline())
         lon = float(file.readline())
@@ -18,12 +22,13 @@ class Coordinate_File:
         file.close()
         return lat, lon, yaw
 
+
 class Log:
     def __init__(self):
         self.log1 = deque()
         self.file_name = self.create_file_w_date()
-    
-    def logger(self,log):
+
+    def logger(self, log):
         self.log1.append(log)
 
     def write_logs(self):
@@ -34,7 +39,8 @@ class Log:
 
     def create_file_name_date(self):
         date_today = datetime.now()
-        date_today_st = str(date_today.day) + "-" + str(date_today.month) + "-" + str(date_today.year) + "-" + str(date_today.hour)+ "-" + str(date_today.minute)
+        date_today_st = str(date_today.day) + "-" + str(date_today.month) + "-" + str(
+            date_today.year) + "-" + str(date_today.hour) + "-" + str(date_today.minute)
         return date_today_st
 
     def create_file_w_date(self):
@@ -44,95 +50,100 @@ class Log:
         file_date.close()
         return file_name1
 
-class Water_Motor:
-    def init():
+
+class WaterMotor:
+    def __init__(self):
+        self.pin7 = 7
+        self.pin8 = 8
+        self.pin19 = 19
+        self.pin25 = 25
+
+    def set_motor_GPIOs(self):
         gpio.setmode(gpio.BCM)
-        gpio.setup(7, gpio.OUT)
-        gpio.setup(8, gpio.OUT)
-        gpio.setup(19, gpio.OUT)
-        gpio.setup(25, gpio.OUT)
+        gpio.setup(self.pin7, gpio.OUT)
+        gpio.setup(self.pin8, gpio.OUT)
+        gpio.setup(self.pin19, gpio.OUT)
+        gpio.setup(self.pin25, gpio.OUT)
 
-    def forward(sec):
-        init()
-        gpio.output(7, True)
-        gpio.output(8, False)
-        gpio.output(19, True)
-        gpio.output(25, False)
+    def forward(self, sec):
+        self.set_motor_GPIOs()
+        gpio.output(self.pin7, True)
+        gpio.output(self.pin8, False)
+        gpio.output(self.pin19, True)
+        gpio.output(self.pin25, False)
         time.sleep(sec)
         gpio.cleanup()
 
-    def reverse(sec):
-        init()
-        gpio.output(7, False)
-        gpio.output(8, True)
-        gpio.output(19, False)
-        gpio.output(25, True)
+    def reverse(self, sec):
+        self.set_motor_GPIOs()
+        gpio.output(self.pin7, False)
+        gpio.output(self.pin8, True)
+        gpio.output(self.pin19, False)
+        gpio.output(self.pin25, True)
         time.sleep(sec)
         gpio.cleanup()
 
-class Water_Level_Sensor:
-    SPICLK = 13
-    SPIMISO = 21
-    SPIMOSI = 19
-    SPICS = 16
 
-    photo_ch = 0
+class WaterLevelSensor:
+    def __init__(self):
+        self.SPICLK = 13
+        self.SPIMISO = 21
+        self.SPIMOSI = 19
+        self.SPICS = 16
 
-    # port init
-    def init():
+        self.photo_ch = 0
+
+    def set_level_sensor_GPIOs(self):
         GPIO.setwarnings(False)
         GPIO.cleanup()  # clean up at the end of your script
         GPIO.setmode(GPIO.BOARD)  # to specify whilch pin numbering system
         # set up the SPI interface pins
-        GPIO.setup(SPIMOSI, GPIO.OUT)
-        GPIO.setup(SPIMISO, GPIO.IN)
-        GPIO.setup(SPICLK, GPIO.OUT)
-        GPIO.setup(SPICS, GPIO.OUT)
+        GPIO.setup(self.SPIMOSI, GPIO.OUT)
+        GPIO.setup(self.SPIMISO, GPIO.IN)
+        GPIO.setup(self.SPICLK, GPIO.OUT)
+        GPIO.setup(self.SPICS, GPIO.OUT)
 
     # read SPI data from MCP3008(or MCP3204) chip,8 possible adc's (0 thru 7)
-    def readadc(adcnum, clockpin, mosipin, misopin, cspin):
-        if ((adcnum > 7) or (adcnum < 0)):
+    def readadc(self):
+
+        self.set_level_sensor_GPIOs()
+
+        if ((self.photo_ch > 7) or (self.photo_ch < 0)):
             return -1
-        GPIO.output(cspin, True)
 
-        GPIO.output(clockpin, False)  # start clock low
-        GPIO.output(cspin, False)  # bring CS low
+        GPIO.output(self.SPICS, True)
+        GPIO.output(self.SPICLK, False)  # start clock low
+        GPIO.output(self.SPICS, False)  # bring CS low
 
-        commandout = adcnum
+        commandout = self.photo_ch
         commandout |= 0x18  # start bit + single-ended bit
         commandout <<= 3  # we only need to send 5 bits here
+
         for i in range(5):
+
             if (commandout & 0x80):
-                GPIO.output(mosipin, True)
+                GPIO.output(self.SPIMOSI, True)
+            
             else:
-                GPIO.output(mosipin, False)
+                GPIO.output(self.SPIMOSI, False)
+            
             commandout <<= 1
-            GPIO.output(clockpin, True)
-            GPIO.output(clockpin, False)
+            GPIO.output(self.SPICLK, True)
+            GPIO.output(self.SPICLK, False)
 
         adcout = 0
         # read in one empty bit, one null bit and 10 ADC bits
         for i in range(12):
-            GPIO.output(clockpin, True)
-            GPIO.output(clockpin, False)
+            GPIO.output(self.SPICLK, True)
+            GPIO.output(self.SPICLK, False)
             adcout <<= 1
-            if (GPIO.input(misopin)):
+            if (GPIO.input(self.SPIMISO)):
                 adcout |= 0x1
 
-        GPIO.output(cspin, True)
-
+        GPIO.output(self.SPICS, True)
         adcout >>= 1  # first bit is 'null' so drop it
-        return adcout
 
-    def main():
-        init()
-        time.sleep(2)
-        print
-        "will start detec water level\n"
-        while True:
-            adc_value = readadc(photo_ch, SPICLK, SPIMOSI, SPIMISO, SPICS)
-            print
-            "water level:" + str("%.1f" % (adc_value / 200. * 100)) + "%\n"
-            print
-            "adc_value= " + str(adc_value) + "\n"
-            time.sleep(1)
+        water_level = round((adc_value / 200. * 100), 1)
+
+        return water_level
+
