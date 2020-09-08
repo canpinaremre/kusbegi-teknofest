@@ -40,7 +40,7 @@ def listener(self, name, home_position):
 #Mission parameters
 #
 MISSION_ALTITUDE = -10 #Down (meters)
-MISSION_CIRCLE_RADIUS = 8 #Meters
+MISSION_CIRCLE_DIAMETER = 8 #Meters ÇAP
 MISSION_COORDINATE_HOME = 'tk_g1_home.txt' #txt file for coordiantes
 MISSION_COORDINATE_FINISH = 'tk_g1_finish.txt' #txt file for coordiantes
 MISSION_COORDINATE_RALLY1 = 'tk_g1_rally1.txt' #txt file for coordiantes
@@ -79,8 +79,8 @@ for i in range(2):
     drone.go_to_coordinate(MISSION_COORDINATE_BOTTOM_OF_CIRCLE)
 
     drone.do_circle(MISSION_COORDINATE_BOTTOM_OF_CIRCLE,
-        MISSION_COORDINATE_TOP_OF_CIRCLE,#If MISSION_CIRCLE_RADIUS != 0 then use MISSION_CIRCLE_RADIUS
-        MISSION_CIRCLE_RADIUS,#If MISSION_CIRCLE_RADIUS = 0 then use MISSION_COORDINATE_TOP_OF_CIRCLE
+        MISSION_COORDINATE_TOP_OF_CIRCLE,#If MISSION_CIRCLE_DIAMETER != 0 then use MISSION_CIRCLE_DIAMETER
+        MISSION_CIRCLE_DIAMETER,#If MISSION_CIRCLE_DIAMETER = 0 then use MISSION_COORDINATE_TOP_OF_CIRCLE
         MISSION_COORDINATE_HOME #Send home position for yaw calculation
         )
 
@@ -106,6 +106,6 @@ drone.wait_for_land()
 
 #Disarm
 drone.disarm()
-
+exit()
 #
 #End of Mission

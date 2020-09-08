@@ -407,7 +407,7 @@ class Kusbegi:
                 return True
         return False
 
-    def wait_for_circle(self,bottomCoordinates,radius,yaw_bottom_to_top):
+    def wait_for_circle(self,bottomCoordinates,diameter,yaw_bottom_to_top):
         #Wait until circle is done
 
         self.log.logger("Wait until circle is done")
@@ -441,7 +441,7 @@ class Kusbegi:
         while (alfa < math.pi*2):
             sleep(0.01)
             alfa = alfa + self.circle_step_magnitude
-            n_ned, e_ned = self.body_to_ned_frame( radius/2 - radius*math.cos(alfa)/2, - radius*math.sin(alfa)/2, yaw_bottom_to_top ) 
+            n_ned, e_ned = self.body_to_ned_frame( diameter/2 - diameter*math.cos(alfa)/2, - diameter*math.sin(alfa)/2, yaw_bottom_to_top ) 
             self.req_pos_x = ts_n + n_ned
             self.req_pos_y = ts_e + e_ned
             self.req_pos_z = self.default_alt
@@ -454,8 +454,8 @@ class Kusbegi:
         return True
 
     
-    def do_circle(self,bottomCoordinates,topCoordinates,radius,homeCoordinate):
-        #Start circle mode. Select with radius or 2 coordinates
+    def do_circle(self,bottomCoordinates,topCoordinates,diameter,homeCoordinate):
+        #Start circle mode. Select with diameter or 2 coordinates
 
         self.log.logger("Start circle mode")
         print("X: ",self.vehicle.location.local_frame.north) #Debug
@@ -465,11 +465,11 @@ class Kusbegi:
         x,y,yaw = self.coordinate.read_coordinates()
         yaw_bottom_to_top = yaw
 
-        if(radius != 0):
-            self.wait_for_circle(bottomCoordinates, radius, yaw_bottom_to_top)
+        if(diameter != 0):
+            self.wait_for_circle(bottomCoordinates, diameter, yaw_bottom_to_top)
         else:
-            radius = self.get_distance_metres(bottomCoordinates, topCoordinates)
-            self.wait_for_circle(bottomCoordinates,radius,yaw_bottom_to_top)
+            diameter = self.get_distance_metres(bottomCoordinates, topCoordinates)
+            self.wait_for_circle(bottomCoordinates,diameter,yaw_bottom_to_top)
 
         self.log.logger("Circle mode is done!")
 
