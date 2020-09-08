@@ -1,4 +1,4 @@
-from dronekit import connect, LocationLocal, VehicleMode, Battery, SystemStatus
+from dronekit import connect, LocationLocal, VehicleMode, Battery, SystemStatus, LocationGlobalRelative
 from pymavlink import mavutil
 import threading
 from time import sleep
@@ -14,6 +14,7 @@ class Kusbegi:
         self.loc_home = None
         self.home_yaw = None
         self.default_alt = None
+        self.default_alt_global = None
 
         self.pos_x = 0.0
         self.pos_y = 0.0
@@ -79,7 +80,7 @@ class Kusbegi:
                 sleep(1)
             print("Home = ", self.vehicle.location.local_frame)
             print("Connected on: ", self.connection_string)
-            self.log.logger("Home = " + self.vehicle.location.local_frame)
+            self.log.logger("Home = " + str(self.vehicle.location.local_frame))
             self.log.logger("Connected on: " + self.connection_string)
             return True
 
@@ -180,6 +181,18 @@ class Kusbegi:
                 0, 0, 0, # NED!
                 0, 0, 0,
                 self.req_yaw_ang, 0)
+
+            if (self.position_frame == self.frame_global_relative_alt):
+                msg = self.vehicle.message_factory.set_position_target_global_int_encode(
+                    0,
+                    0, 0,
+                    mavutil.mavlink.MAV_FRAME_GLOBAL,
+                    0b101111111000,
+                    int(self.req_pos_x*1e7), int(self.req_pos_y*1e7), self.default_alt_global, # NED!
+                    0, 0, 0, # NED!
+                    0, 0, 0,
+                    self.req_yaw_ang, 0)
+
             # send command to vehicle
             self.vehicle.send_mavlink(msg)
             self.vehicle.flush()
@@ -298,43 +311,49 @@ class Kusbegi:
         self.log.logger("Go to coordinate with file name = " + filename)
 
         self.position_frame = self.frame_global_relative_alt
+        self.drive_type = self.drive_w_setpnt
+        self.default_alt_global = self.vehicle.location.global_frame.alt
+        #self.vehicle.groundspeed = 0.5
+        #self.vehicle.airspeed = 0.5
 
         self.req_pos_x = x
         self.req_pos_y = y
-        self.req_pos_z = altTarget
+        self.req_pos_z = self.default_alt_global
         self.req_yaw_ang = yaw
 
         self.log.logger("Target : " + str(x) + " , " + str(y))
-        if (frame == self.frame_global_relative_alt):
-            while not (self.at_the_target_yet_global(x,y)):
-                self.log.logger("Not at the target yet with global frame")
-                sleep(1)
+
+        while not (self.at_the_target_yet_global(x,y)):
+            self.log.logger("Not at the target yet with global frame")
+            sleep(1)
         
-        self.log.logger("Target reached : " + str(x) + " , " + str(y))
-        
+        self.log.logger("Target reached : " + str(self.vehicle.location.global_frame.lat) + " , " + str(self.vehicle.location.global_frame.lon))
         self.print_status()
+
         return True
 
     def go_to_location(self,xTarget,yTarget,altTarget,yaw,frame):
         #Go to location with frame type, x, y, z, yaw and wait for it
 
         self.log.logger("Go to location with frame type, x, y, z, yaw and wait for it")
-
+        print("Go to location with frame type, x, y, z, yaw and wait for it")#DEBUG
         self.position_frame = frame
 
         self.req_pos_x = xTarget
         self.req_pos_y = yTarget
         self.req_pos_z = altTarget
         self.req_yaw_ang = yaw
-
+        self.log.write_logs() #DEBUG
         if (frame == self.frame_global_relative_alt):
             while not (self.at_the_target_yet_global(xTarget,yTarget)):
                 self.log.logger("Waiting to reach target with global frame")
+                print("Waiting to reach target with global frame") #DEBUG
                 sleep(1)
         
         if (frame == self.frame_local_ned):
             while not (self.at_the_target_yet_ned(xTarget,yTarget)):
                 self.log.logger("Waiting to reach target with ned frame")
+                self.log.write_logs() #DEBUG
                 sleep(1)
 
         self.log.logger("Target reached")
@@ -362,14 +381,17 @@ class Kusbegi:
 
     def body_to_ned_frame(self,xBody,yBody,yawBody):
         #Convert body frame to ned frame
+
         xNed =  (xBody * math.cos(yawBody) ) - ( yBody * math.sin(yawBody) )
         yNed =  (xBody * math.sin(yawBody) ) + ( yBody * math.cos(yawBody) )
+
         return xNed,yNed
 
     def at_the_target_yet_global(self,xTarget,yTarget):
         #Wait for reaching target with global frame
-        if (abs(xTarget-self.vehicle.location.global_relative_frame) < self.distance_tolerance_global):
-            if(abs(yTarget-self.vehicle.location.global_relative_frame) < self.distance_tolerance_global):
+
+        if (abs(xTarget-self.vehicle.location.global_relative_frame.lat) < self.distance_tolerance_global):
+            if(abs(yTarget-self.vehicle.location.global_relative_frame.lon) < self.distance_tolerance_global):
                 print("Target point reached")
                 self.log.logger("Target point reached")
                 return True
@@ -377,6 +399,7 @@ class Kusbegi:
 
     def at_the_target_yet_ned(self,xTarget,yTarget):
         #Wait for reaching target with NED frame
+
         if (abs(xTarget-self.pos_x) < self.distance_tolerance):
             if(abs(yTarget-self.pos_y) < self.distance_tolerance):
                 print("Target point reached")
@@ -387,43 +410,47 @@ class Kusbegi:
     def wait_for_circle(self,bottomCoordinates,radius,yaw_bottom_to_top):
         #Wait until circle is done
 
-        self.log.logger("Starteed wait until circle is done")
+        self.log.logger("Wait until circle is done")
         
         self.coordinate.file_dir = bottomCoordinates
         x,y,yaw = self.coordinate.read_coordinates()
 
-        ts_yaw = yaw_bottom_to_top + math.pi/2
+        ts_yaw = yaw_bottom_to_top - math.pi/2
 
-        self.go_to_location(x, y, self.default_alt, ts_yaw, self.frame_global_relative_alt)
+        self.go_to_coordinate(bottomCoordinates)
 
-        self.drive_type = self.drive_w_setpnt
-        self.position_frame = self.frame_local_ned
+        
 
-        self.req_pos_x = self.pos_x
-        self.req_pos_y = self.pos_y
+        x = self.vehicle.location.local_frame.north
+        y = self.vehicle.location.local_frame.east
+
+        self.req_pos_x = x
+        self.req_pos_y = y
+
         self.req_pos_z = self.default_alt
 
-        ts_x = self.pos_x
-        ts_y = self.pos_y
-        ts_z = self.default_alt
+        self.position_frame = self.frame_local_ned
+
+        ts_n = x
+        ts_e = y
         
         self.log.logger("Started circle loop")
 
-        alfa = 0
+        alfa = 0 
 
-        while (alfa < 360):
+        while (alfa < math.pi*2):
             sleep(0.01)
             alfa = alfa + self.circle_step_magnitude
-            x_ned, y_ned = body_to_ned_frame( (ts_x - (radius*math.sin(alfa)/2)), (ts_y + radius/2 - radius*math.cos(alfa)/2), yaw_bottom_to_top )
-            self.req_pos_x = x_ned
-            self.req_pos_y = y_ned
+            n_ned, e_ned = self.body_to_ned_frame( radius/2 - radius*math.cos(alfa)/2, - radius*math.sin(alfa)/2, yaw_bottom_to_top ) 
+            self.req_pos_x = ts_n + n_ned
+            self.req_pos_y = ts_e + e_ned
             self.req_pos_z = self.default_alt
-            self.req_yaw_ang = ts_yaw + math.pi/2 - alfa
+            self.req_yaw_ang = ts_yaw + alfa
+            
 
-            if(alfa >= 360):
-                break
+            
 
-            self.log.logger("Break circle loop. End of mode circle")
+        self.log.logger("Break circle loop. End of mode circle")
         return True
 
     
@@ -431,15 +458,18 @@ class Kusbegi:
         #Start circle mode. Select with radius or 2 coordinates
 
         self.log.logger("Start circle mode")
-
-        x,y,yaw = self.coordinate.read_coordinates(homeCoordinate)
-        yaw_bottom_to_top = yaw + math.pi/2
+        print("X: ",self.vehicle.location.local_frame.north) #Debug
+        print("Y: ",self.vehicle.location.local_frame.east) #Debug
+        print("debug")
+        self.coordinate.file_dir = homeCoordinate
+        x,y,yaw = self.coordinate.read_coordinates()
+        yaw_bottom_to_top = yaw
 
         if(radius != 0):
             self.wait_for_circle(bottomCoordinates, radius, yaw_bottom_to_top)
         else:
             radius = self.get_distance_metres(bottomCoordinates, topCoordinates)
-            self.wait_for_circle(bottomCoordinates,radius)
+            self.wait_for_circle(bottomCoordinates,radius,yaw_bottom_to_top)
 
         self.log.logger("Circle mode is done!")
 

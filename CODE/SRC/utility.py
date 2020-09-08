@@ -6,15 +6,15 @@ class CoordinateFile:
     def __init__(self):
         self.file_dir = None
 
-    def write_coordinates(self, lat, lon, yaw, file_path=self.file_dir):
-        file = open(file_path, 'w')
+    def write_coordinates(self, lat, lon, yaw):
+        file = open(self.file_dir, 'w')
         file.write(str(lat) + "\n")
         file.write(str(lon) + "\n")
         file.write(str(yaw))
         file.close()
 
-    def read_coordinates(self, file_path=self.file_dir):
-        file = open(file_path, 'r')
+    def read_coordinates(self):
+        file = open(self.file_dir, 'r')
         lat = float(file.readline())
         lon = float(file.readline())
         yaw = float(file.readline())

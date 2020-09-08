@@ -78,10 +78,11 @@ file_names.append( MISSION_COORDINATE_RALLY2 )
 file_names.append( MISSION_COORDINATE_BOTTOM_OF_CIRCLE )
 #file_names.append( MISSION_COORDINATE_TOP_OF_CIRCLE )
 file_names.append( MISSION_COORDINATE_RALLY3 )
-file_names.append( MISSION_COORDINATE_RALLY3 )
+file_names.append( MISSION_COORDINATE_RALLY4 )
 
 for name in file_names:
     wait_key()
-    drone.coordinate.write_coordinates(drone.vehicle.location.lat, drone.vehicle.location.lon, drone.vehicle.attitude.yaw)
-
+    #drone.coordinate.file_dir = name
+    #drone.coordinate.write_coordinates(drone.vehicle.location.global_relative_frame.lat, drone.vehicle.location.global_relative_frame.lon, drone.vehicle.attitude.yaw)
+    drone.save_coordinate(name)
 print("Done")
