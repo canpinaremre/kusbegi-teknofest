@@ -85,4 +85,5 @@ for name in file_names:
     #drone.coordinate.file_dir = name
     #drone.coordinate.write_coordinates(drone.vehicle.location.global_relative_frame.lat, drone.vehicle.location.global_relative_frame.lon, drone.vehicle.attitude.yaw)
     drone.save_coordinate(name)
+    print("Coordiante saved for file : ",name)
 print("Done")
