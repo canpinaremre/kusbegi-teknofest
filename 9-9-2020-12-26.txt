@@ -1,0 +1,314 @@
+12:26:46- Logger initialized
+12:26:47- Home = LocationLocal:north=0.003558473428711295,east=0.019973602145910263,down=-0.010485886596143246
+12:26:47- Connected on: 127.0.0.1:14540
+12:26:47- Ready to takeoff!
+12:26:47- Print Status and write logs
+12:26:47-  Armed: False
+12:26:47-  System status: STANDBY
+12:26:47-  GPS: GPSInfo:fix=3,num_sat=10
+12:26:47-  Alt: 0.003
+12:26:47- Burkut setpoint buffer thread activated
+12:26:47- Try Arm
+12:26:47- Home position not set!
+12:26:48- Home position not set!
+12:26:49- Trying arming
+12:26:50- VEHICLE ARMED!
+12:26:50- Home Location(-0.013622568920254707, 0.013034315779805183, -0.011354489251971245)
+12:26:50- Try mode OFFBOARD
+12:26:50- Waiting offboard mode
+12:26:50- Waiting offboard mode
+12:26:50- Waiting offboard mode
+12:26:50- Waiting offboard mode
+12:26:51- Mode : OFFBOARD!
+12:26:51- Print Status and write logs
+12:26:51-  Armed: True
+12:26:51-  System status: ACTIVE
+12:26:51-  GPS: GPSInfo:fix=3,num_sat=10
+12:26:51-  Alt: 0.0
+12:26:51- Initialising: TAKEOFF
+12:26:51-      Altitude: -0.010445537976920605 meter
+12:26:52-      Altitude: -0.009897150099277496 meter
+12:26:53-      Altitude: -0.32319703698158264 meter
+12:26:54-      Altitude: -1.316987156867981 meter
+12:26:55-      Altitude: -3.235215902328491 meter
+12:26:56-      Altitude: -5.173628807067871 meter
+12:26:57-      Altitude: -5.741232395172119 meter
+12:26:58- Target altitude reached : -6
+12:26:58- Tour 1 started
+12:26:58- Go to coordinate with file name = tk_g1_finish.txt
+12:26:58- Target : 47.3977527 , 8.5460796
+12:26:58- Not at the target yet with global frame
+12:26:59- Not at the target yet with global frame
+12:27:0- Not at the target yet with global frame
+12:27:1- Not at the target yet with global frame
+12:27:2- Not at the target yet with global frame
+12:27:3- Not at the target yet with global frame
+12:27:4- Not at the target yet with global frame
+12:27:5- Not at the target yet with global frame
+12:27:6- Not at the target yet with global frame
+12:27:7- Not at the target yet with global frame
+12:27:8- Target point reached
+12:27:8- Target reached : 47.3977524 , 8.5460724
+12:27:8- Print Status and write logs
+12:27:8-  Armed: True
+12:27:8-  System status: ACTIVE
+12:27:8-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:8-  Alt: 5.832
+12:27:8- Go to coordinate with file name = tk_g1_rally1.txt
+12:27:8- Target : 47.3978288 , 8.5461656
+12:27:8- Not at the target yet with global frame
+12:27:9- Not at the target yet with global frame
+12:27:10- Not at the target yet with global frame
+12:27:11- Not at the target yet with global frame
+12:27:12- Target point reached
+12:27:12- Target reached : 47.3978263 , 8.546163
+12:27:12- Print Status and write logs
+12:27:12-  Armed: True
+12:27:12-  System status: ACTIVE
+12:27:12-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:12-  Alt: 5.785
+12:27:12- Go to coordinate with file name = tk_g1_rally2.txt
+12:27:12- Target : 47.3978884 , 8.5460943
+12:27:12- Not at the target yet with global frame
+12:27:13- Not at the target yet with global frame
+12:27:14- Not at the target yet with global frame
+12:27:15- Target point reached
+12:27:15- Target reached : 47.3978799 , 8.5460966
+12:27:15- Print Status and write logs
+12:27:15-  Armed: True
+12:27:15-  System status: ACTIVE
+12:27:15-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:15-  Alt: 5.765
+12:27:15- Go to coordinate with file name = tk_g1_bottom_of_circle.txt
+12:27:15- Target : 47.3978815 , 8.5458428
+12:27:15- Not at the target yet with global frame
+12:27:16- Not at the target yet with global frame
+12:27:17- Not at the target yet with global frame
+12:27:18- Not at the target yet with global frame
+12:27:19- Not at the target yet with global frame
+12:27:20- Target point reached
+12:27:20- Target reached : 47.3978793 , 8.5458483
+12:27:20- Print Status and write logs
+12:27:20-  Armed: True
+12:27:20-  System status: ACTIVE
+12:27:20-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:20-  Alt: 5.732
+12:27:20- Start circle mode
+12:27:20- Wait until circle is done
+12:27:20- Go to coordinate with file name = tk_g1_bottom_of_circle.txt
+12:27:20- Target : 47.3978815 , 8.5458428
+12:27:20- Target point reached
+12:27:20- Target reached : 47.3978793 , 8.5458483
+12:27:20- Print Status and write logs
+12:27:20-  Armed: True
+12:27:20-  System status: ACTIVE
+12:27:20-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:20-  Alt: 5.732
+12:27:20- Started circle loop
+12:27:36- Break circle loop. End of mode circle
+12:27:36- Circle mode is done!
+12:27:36- Print Status and write logs
+12:27:36-  Armed: True
+12:27:36-  System status: ACTIVE
+12:27:36-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:36-  Alt: 5.993
+12:27:36- Go to coordinate with file name = tk_g1_rally3.txt
+12:27:36- Target : 47.3978433 , 8.5455079
+12:27:36- Not at the target yet with global frame
+12:27:37- Not at the target yet with global frame
+12:27:38- Not at the target yet with global frame
+12:27:39- Not at the target yet with global frame
+12:27:40- Not at the target yet with global frame
+12:27:41- Not at the target yet with global frame
+12:27:42- Target point reached
+12:27:42- Target reached : 47.3978437 , 8.5455149
+12:27:42- Print Status and write logs
+12:27:42-  Armed: True
+12:27:42-  System status: ACTIVE
+12:27:42-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:42-  Alt: 5.925
+12:27:42- Go to coordinate with file name = tk_g1_rally4.txt
+12:27:42- Target : 47.3977853 , 8.5455122
+12:27:42- Not at the target yet with global frame
+12:27:43- Not at the target yet with global frame
+12:27:44- Not at the target yet with global frame
+12:27:45- Target point reached
+12:27:45- Target reached : 47.3977888 , 8.5455182
+12:27:45- Print Status and write logs
+12:27:45-  Armed: True
+12:27:45-  System status: ACTIVE
+12:27:45-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:45-  Alt: 5.891
+12:27:45- Go to coordinate with file name = tk_g1_home.txt
+12:27:45- Target : 47.3977418 , 8.5455953
+12:27:45- Not at the target yet with global frame
+12:27:46- Not at the target yet with global frame
+12:27:47- Not at the target yet with global frame
+12:27:48- Target point reached
+12:27:48- Target reached : 47.3977474 , 8.5455887
+12:27:48- Print Status and write logs
+12:27:48-  Armed: True
+12:27:48-  System status: ACTIVE
+12:27:48-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:48-  Alt: 5.864
+12:27:48- Tour 2 started
+12:27:48- Go to coordinate with file name = tk_g1_finish.txt
+12:27:48- Target : 47.3977527 , 8.5460796
+12:27:48- Not at the target yet with global frame
+12:27:49- Not at the target yet with global frame
+12:27:50- Not at the target yet with global frame
+12:27:51- Not at the target yet with global frame
+12:27:52- Not at the target yet with global frame
+12:27:53- Not at the target yet with global frame
+12:27:54- Not at the target yet with global frame
+12:27:55- Not at the target yet with global frame
+12:27:56- Not at the target yet with global frame
+12:27:57- Not at the target yet with global frame
+12:27:58- Target point reached
+12:27:58- Target reached : 47.3977527 , 8.5460718
+12:27:58- Print Status and write logs
+12:27:58-  Armed: True
+12:27:58-  System status: ACTIVE
+12:27:58-  GPS: GPSInfo:fix=3,num_sat=10
+12:27:58-  Alt: 5.829
+12:27:58- Go to coordinate with file name = tk_g1_rally1.txt
+12:27:58- Target : 47.3978288 , 8.5461656
+12:27:58- Not at the target yet with global frame
+12:27:59- Not at the target yet with global frame
+12:28:0- Not at the target yet with global frame
+12:28:1- Not at the target yet with global frame
+12:28:2- Target point reached
+12:28:2- Target reached : 47.3978265 , 8.5461645
+12:28:2- Print Status and write logs
+12:28:2-  Armed: True
+12:28:2-  System status: ACTIVE
+12:28:2-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:2-  Alt: 5.806
+12:28:2- Go to coordinate with file name = tk_g1_rally2.txt
+12:28:2- Target : 47.3978884 , 8.5460943
+12:28:2- Not at the target yet with global frame
+12:28:3- Not at the target yet with global frame
+12:28:4- Not at the target yet with global frame
+12:28:5- Target point reached
+12:28:5- Target reached : 47.3978795 , 8.5460982
+12:28:5- Print Status and write logs
+12:28:5-  Armed: True
+12:28:5-  System status: ACTIVE
+12:28:5-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:5-  Alt: 5.812
+12:28:5- Go to coordinate with file name = tk_g1_bottom_of_circle.txt
+12:28:5- Target : 47.3978815 , 8.5458428
+12:28:5- Not at the target yet with global frame
+12:28:6- Not at the target yet with global frame
+12:28:7- Not at the target yet with global frame
+12:28:8- Not at the target yet with global frame
+12:28:9- Not at the target yet with global frame
+12:28:10- Target point reached
+12:28:10- Target reached : 47.3978788 , 8.5458485
+12:28:10- Print Status and write logs
+12:28:10-  Armed: True
+12:28:10-  System status: ACTIVE
+12:28:10-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:10-  Alt: 5.792
+12:28:10- Start circle mode
+12:28:10- Wait until circle is done
+12:28:10- Go to coordinate with file name = tk_g1_bottom_of_circle.txt
+12:28:10- Target : 47.3978815 , 8.5458428
+12:28:10- Target point reached
+12:28:10- Target reached : 47.3978788 , 8.5458485
+12:28:10- Print Status and write logs
+12:28:10-  Armed: True
+12:28:10-  System status: ACTIVE
+12:28:10-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:10-  Alt: 5.792
+12:28:10- Started circle loop
+12:28:26- Break circle loop. End of mode circle
+12:28:26- Circle mode is done!
+12:28:26- Print Status and write logs
+12:28:26-  Armed: True
+12:28:26-  System status: ACTIVE
+12:28:26-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:26-  Alt: 5.995
+12:28:26- Go to coordinate with file name = tk_g1_rally3.txt
+12:28:26- Target : 47.3978433 , 8.5455079
+12:28:26- Not at the target yet with global frame
+12:28:27- Not at the target yet with global frame
+12:28:28- Not at the target yet with global frame
+12:28:29- Not at the target yet with global frame
+12:28:30- Not at the target yet with global frame
+12:28:31- Not at the target yet with global frame
+12:28:32- Target point reached
+12:28:32- Target reached : 47.3978438 , 8.5455148
+12:28:32- Print Status and write logs
+12:28:32-  Armed: True
+12:28:32-  System status: ACTIVE
+12:28:32-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:32-  Alt: 5.933
+12:28:32- Go to coordinate with file name = tk_g1_rally4.txt
+12:28:32- Target : 47.3977853 , 8.5455122
+12:28:32- Not at the target yet with global frame
+12:28:33- Not at the target yet with global frame
+12:28:34- Not at the target yet with global frame
+12:28:35- Target point reached
+12:28:35- Target reached : 47.3977899 , 8.5455186
+12:28:35- Print Status and write logs
+12:28:35-  Armed: True
+12:28:35-  System status: ACTIVE
+12:28:35-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:35-  Alt: 5.898
+12:28:35- Go to coordinate with file name = tk_g1_home.txt
+12:28:35- Target : 47.3977418 , 8.5455953
+12:28:35- Not at the target yet with global frame
+12:28:36- Not at the target yet with global frame
+12:28:37- Not at the target yet with global frame
+12:28:38- Target point reached
+12:28:38- Target reached : 47.3977463 , 8.5455904
+12:28:38- Print Status and write logs
+12:28:38-  Armed: True
+12:28:38-  System status: ACTIVE
+12:28:38-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:38-  Alt: 5.874
+12:28:38- Go to coordinate with file name = tk_g1_finish.txt
+12:28:38- Target : 47.3977527 , 8.5460796
+12:28:38- Not at the target yet with global frame
+12:28:39- Not at the target yet with global frame
+12:28:40- Not at the target yet with global frame
+12:28:41- Not at the target yet with global frame
+12:28:42- Not at the target yet with global frame
+12:28:43- Not at the target yet with global frame
+12:28:44- Not at the target yet with global frame
+12:28:45- Not at the target yet with global frame
+12:28:46- Not at the target yet with global frame
+12:28:47- Not at the target yet with global frame
+12:28:48- Target point reached
+12:28:48- Target reached : 47.3977524 , 8.5460723
+12:28:48- Print Status and write logs
+12:28:48-  Armed: True
+12:28:48-  System status: ACTIVE
+12:28:48-  GPS: GPSInfo:fix=3,num_sat=10
+12:28:48-  Alt: 5.848
+12:28:48- -> LAND
+12:28:48- Trying land mode
+12:28:49- Trying land mode
+12:28:49- Trying land mode
+12:28:49- Mode Land!
+12:28:49- Landing...
+12:28:49- Waiting for land detected
+12:28:50- Waiting for land detected
+12:28:51- Waiting for land detected
+12:28:52- Waiting for land detected
+12:28:53- Waiting for land detected
+12:28:54- Waiting for land detected
+12:28:55- Waiting for land detected
+12:28:56- Waiting for land detected
+12:28:57- Waiting for land detected
+12:28:58- Waiting for land detected
+12:28:59- Waiting for land detected
+12:29:0- Waiting for land detected
+12:29:1- Waiting for land detected
+12:29:1- Land detected!
+12:29:1- Print Status and write logs
+12:29:1-  Armed: True
+12:29:1-  System status: ACTIVE
+12:29:1-  GPS: GPSInfo:fix=3,num_sat=10
+12:29:1-  Alt: -0.074

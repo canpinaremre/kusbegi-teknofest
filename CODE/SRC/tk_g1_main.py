@@ -24,10 +24,12 @@ def listener(self, name, msg):
     if(msg.landed_state == 1):
         if(drone.state_on_ground == False):
             print("On ground state received")
+            drone.log.logger("On ground state received")
         drone.state_on_ground = True
     if(msg.landed_state != 1):
         if(drone.state_on_ground == True):
             print("Not on ground state received")
+            drone.log.logger("Not on ground state received")
         drone.state_on_ground = False
 
 @drone.vehicle.on_message('HOME_POSITION')
@@ -39,7 +41,7 @@ def listener(self, name, home_position):
 
 #Mission parameters
 #
-MISSION_ALTITUDE = -10 #Down (meters)
+MISSION_ALTITUDE = -6 #Down (meters)
 MISSION_CIRCLE_DIAMETER = 8 #Meters ÇAP
 MISSION_COORDINATE_HOME = 'tk_g1_home.txt' #txt file for coordiantes
 MISSION_COORDINATE_FINISH = 'tk_g1_finish.txt' #txt file for coordiantes
@@ -106,6 +108,7 @@ drone.wait_for_land()
 
 #Disarm
 drone.disarm()
+drone.stop()
 exit()
 #
 #End of Mission

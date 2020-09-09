@@ -1,9 +1,10 @@
 from tk_dronekit_kusbegi import Kusbegi
+from utility import WaterLevelSensor, Pump
 
 from dronekit import connect, LocationLocal, VehicleMode, Battery, SystemStatus
 from pymavlink import mavutil
 import threading
-from time import sleep
+from time import sleep, time
 import math
 
 
@@ -39,7 +40,9 @@ def listener(self, name, home_position):
 
 #Mission parameters
 #
-MISSION_ALTITUDE = -10 #Down (meters)
+MISSION_PUMP_TIMEOUT = 20 #Seconds
+MISSION_MAX_WATER_SENSOR = 400 # ADC max value to stop motors
+MISSION_ALTITUDE = -6 #Down (meters) #Min 4 - max 30 mt
 MISSION_COORDINATE_HOME = 'tk_g2_home.txt' #txt file for coordiantes
 MISSION_COORDINATE_FINISH = 'tk_g2_finish.txt' #txt file for coordiantes
 MISSION_COORDINATE_RALLY1 = 'tk_g2_rally1.txt' #txt file for coordiantes
@@ -58,7 +61,7 @@ drone.default_alt = MISSION_ALTITUDE
 
 drone.ready_to_takeoff()
 
-drone.mode_takeoff(MISSION_ALTITUDE) #Takeoff to MISSION_ALTITUDE
+drone.mode_takeoff(MISSION_ALTITUDE) #Takeoff to MISSION_ALTITUDE at MISSION_COORDINATE_HOME
 
 drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
 
@@ -86,6 +89,24 @@ drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
 drone.go_to_coordinate(MISSION_COORDINATE_POOL)
 # Land and pump water in
+drone.mode_land()
+
+drone.wait_for_land()
+
+pump = Pump()
+
+water_level_sensor = WaterLevelSensor()
+
+ts = time()
+
+while ( (time()- ts) < MISSION_PUMP_TIMEOUT ):
+    pump.pump_water_in()
+
+    if (water_level_sensor.readadc > MISSION_MAX_WATER_SENSOR):
+        break
+
+pump.close_and_clean()
+water_level_sensor.
 
 drone.go_to_coordinate(MISSION_COORDINATE_RED_AREA)
 #Descend and pump water out

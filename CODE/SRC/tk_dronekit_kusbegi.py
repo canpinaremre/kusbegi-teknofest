@@ -32,7 +32,7 @@ class Kusbegi:
 
         self.distance_tolerance = 1 #meter
         self.distance_tolerance_global = self.distance_tolerance / 1.113195e5
-        self.circle_step_magnitude = 0.001
+        self.circle_step_magnitude = 0.0035
 
         self.spd_x = 0.0
         self.spd_y = 0.0
@@ -199,6 +199,8 @@ class Kusbegi:
             self.updateParams()
             sleep(0.3)
             if(self.should_stop_thread == True):
+                print("Thread killed")
+                self.log.logger("Thread killed")
                 break
      
     def mode_takeoff(self, req_height):

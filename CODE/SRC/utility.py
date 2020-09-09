@@ -1,6 +1,7 @@
 from datetime import datetime
 import queue
 from collections import deque
+#import RPi.GPIO as gpio
 
 class CoordinateFile:
     def __init__(self):
@@ -50,12 +51,13 @@ class Log:
         return file_name1
 
 
-class WaterMotor:
+class Pump:
     def __init__(self):
         self.pin7 = 7
         self.pin8 = 8
         self.pin19 = 19
         self.pin25 = 25
+        self.set_motor_GPIOs()
 
     def set_motor_GPIOs(self):
         gpio.setmode(gpio.BCM)
@@ -64,24 +66,24 @@ class WaterMotor:
         gpio.setup(self.pin19, gpio.OUT)
         gpio.setup(self.pin25, gpio.OUT)
 
-    def forward(self, sec):
-        self.set_motor_GPIOs()
+    def pump_water_in(self):
         gpio.output(self.pin7, True)
         gpio.output(self.pin8, False)
         gpio.output(self.pin19, True)
         gpio.output(self.pin25, False)
-        time.sleep(sec)
-        gpio.cleanup()
 
-    def reverse(self, sec):
-        self.set_motor_GPIOs()
+    def pump_water_out(self):
         gpio.output(self.pin7, False)
         gpio.output(self.pin8, True)
         gpio.output(self.pin19, False)
         gpio.output(self.pin25, True)
-        time.sleep(sec)
-        gpio.cleanup()
 
+    def close_and_clean(self):
+        gpio.output(self.pin7, False)
+        gpio.output(self.pin8, False)
+        gpio.output(self.pin19, False)
+        gpio.output(self.pin25, False)
+        gpio.cleanup()
 
 class WaterLevelSensor:
     def __init__(self):
@@ -91,28 +93,30 @@ class WaterLevelSensor:
         self.SPICS = 16
 
         self.photo_ch = 0
+        self.set_level_sensor_GPIOs()
 
     def set_level_sensor_GPIOs(self):
-        GPIO.setwarnings(False)
-        GPIO.cleanup()  # clean up at the end of your script
-        GPIO.setmode(GPIO.BOARD)  # to specify whilch pin numbering system
+        gpio.setwarnings(False)
+        gpio.setmode(gpio.BOARD)  # to specify whilch pin numbering system
         # set up the SPI interface pins
-        GPIO.setup(self.SPIMOSI, GPIO.OUT)
-        GPIO.setup(self.SPIMISO, GPIO.IN)
-        GPIO.setup(self.SPICLK, GPIO.OUT)
-        GPIO.setup(self.SPICS, GPIO.OUT)
+        gpio.setup(self.SPIMOSI, gpio.OUT)
+        gpio.setup(self.SPIMISO, gpio.IN)
+        gpio.setup(self.SPICLK, gpio.OUT)
+        gpio.setup(self.SPICS, gpio.OUT)
+        
+
+    def close_and_clean(self):
+        gpio.cleanup()  # clean up at the end of your script
 
     # read SPI data from MCP3008(or MCP3204) chip,8 possible adc's (0 thru 7)
     def readadc(self):
 
-        self.set_level_sensor_GPIOs()
-
         if ((self.photo_ch > 7) or (self.photo_ch < 0)):
             return -1
 
-        GPIO.output(self.SPICS, True)
-        GPIO.output(self.SPICLK, False)  # start clock low
-        GPIO.output(self.SPICS, False)  # bring CS low
+        gpio.output(self.SPICS, True)
+        gpio.output(self.SPICLK, False)  # start clock low
+        gpio.output(self.SPICS, False)  # bring CS low
 
         commandout = self.photo_ch
         commandout |= 0x18  # start bit + single-ended bit
@@ -121,28 +125,28 @@ class WaterLevelSensor:
         for i in range(5):
 
             if (commandout & 0x80):
-                GPIO.output(self.SPIMOSI, True)
+                gpio.output(self.SPIMOSI, True)
             
             else:
-                GPIO.output(self.SPIMOSI, False)
+                gpio.output(self.SPIMOSI, False)
             
             commandout <<= 1
-            GPIO.output(self.SPICLK, True)
-            GPIO.output(self.SPICLK, False)
+            gpio.output(self.SPICLK, True)
+            gpio.output(self.SPICLK, False)
 
         adcout = 0
         # read in one empty bit, one null bit and 10 ADC bits
         for i in range(12):
-            GPIO.output(self.SPICLK, True)
-            GPIO.output(self.SPICLK, False)
+            gpio.output(self.SPICLK, True)
+            gpio.output(self.SPICLK, False)
             adcout <<= 1
-            if (GPIO.input(self.SPIMISO)):
+            if (gpio.input(self.SPIMISO)):
                 adcout |= 0x1
 
-        GPIO.output(self.SPICS, True)
+        gpio.output(self.SPICS, True)
         adcout >>= 1  # first bit is 'null' so drop it
 
-        water_level = round((adc_value / 200. * 100), 1)
+        water_level = round((adcout / 200. * 100), 1)
 
         return water_level
 

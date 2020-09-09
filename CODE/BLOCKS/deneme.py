@@ -1,10 +1,10 @@
-from utility import *
+from time import time, sleep
 
-log = Log()
 
-log.logger("Asdsad")
-log.write_logs()
-log.logger("sdsdss")
+ts = time()
 
-log.write_logs()
-log.logger("sdsdss")
+sleep(1)
+
+print(time()-ts)
+
+exit()
