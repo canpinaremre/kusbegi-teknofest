@@ -1,5 +1,6 @@
 from csi_camera import CSI_Camera
 from time import sleep
+import threading
 
 show_fps = True
 stop_thread_csi = False
@@ -90,7 +91,7 @@ def start_camera():
             #red = cv2.bitwise_and(frame, frame, mask=red_mask)
 
             cv2.imshow("Red", red_mask)
-                
+
             #Calculate red area
             RED_AREA_VOLUME = cv2.countNonZero(red_mask)
 
