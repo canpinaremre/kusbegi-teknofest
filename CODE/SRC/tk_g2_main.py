@@ -71,6 +71,7 @@ drone.go_to_coordinate(MISSION_COORDINATE_POOL)
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
 #Start opencv
+#!!! SLOW DOWN!!!
 
 #Start opencv thread and detect red area coordinate
 

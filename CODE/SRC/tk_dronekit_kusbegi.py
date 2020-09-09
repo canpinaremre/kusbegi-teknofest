@@ -32,7 +32,7 @@ class Kusbegi:
 
         self.distance_tolerance = 1 #meter
         self.distance_tolerance_global = self.distance_tolerance / 1.113195e5
-        self.circle_step_magnitude = 0.0035
+        self.circle_step_magnitude = 0.07
 
         self.spd_x = 0.0
         self.spd_y = 0.0
@@ -441,7 +441,7 @@ class Kusbegi:
         alfa = 0 
 
         while (alfa < math.pi*2):
-            sleep(0.01)
+            sleep(0.3)
             alfa = alfa + self.circle_step_magnitude
             n_ned, e_ned = self.body_to_ned_frame( diameter/2 - diameter*math.cos(alfa)/2, - diameter*math.sin(alfa)/2, yaw_bottom_to_top ) 
             self.req_pos_x = ts_n + n_ned
