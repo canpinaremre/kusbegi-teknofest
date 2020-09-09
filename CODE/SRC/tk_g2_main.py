@@ -97,16 +97,25 @@ pump = Pump()
 
 water_level_sensor = WaterLevelSensor()
 
+print("Start pumping")
+drone.log.logger("Start pumping")
+
 ts = time()
 
 while ( (time()- ts) < MISSION_PUMP_TIMEOUT ):
     pump.pump_water_in()
 
     if (water_level_sensor.readadc > MISSION_MAX_WATER_SENSOR):
+        print("Water level reached!")
+        drone.log.logger("Water level reached!")
         break
 
+print("Stop pumping")
+drone.log.logger("Stop pumping")
+
 pump.close_and_clean()
-water_level_sensor.
+water_level_sensor.close_and_clean()
+
 
 drone.go_to_coordinate(MISSION_COORDINATE_RED_AREA)
 #Descend and pump water out
