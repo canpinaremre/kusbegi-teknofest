@@ -1,10 +1,8 @@
 from time import time, sleep
+import 
 
 
-ts = time()
 
-sleep(1)
 
-print(time()-ts)
 
 exit()

@@ -53,36 +53,36 @@ class Log:
 
 class Pump:
     def __init__(self):
-        self.pin7 = 7
-        self.pin8 = 8
-        self.pin19 = 19
-        self.pin25 = 25
+        self.pin26 = 26
+        self.pin24 = 24
+        self.pin35 = 35
+        self.pin22 = 22
         self.set_motor_GPIOs()
 
     def set_motor_GPIOs(self):
-        gpio.setmode(gpio.BCM)
-        gpio.setup(self.pin7, gpio.OUT)
-        gpio.setup(self.pin8, gpio.OUT)
-        gpio.setup(self.pin19, gpio.OUT)
-        gpio.setup(self.pin25, gpio.OUT)
+        gpio.setmode(gpio.BOARD)
+        gpio.setup(self.pin26, gpio.OUT)
+        gpio.setup(self.pin24, gpio.OUT)
+        gpio.setup(self.pin35, gpio.OUT)
+        gpio.setup(self.pin22, gpio.OUT)
 
     def pump_water_in(self):
-        gpio.output(self.pin7, True)
-        gpio.output(self.pin8, False)
-        gpio.output(self.pin19, True)
-        gpio.output(self.pin25, False)
+        gpio.output(self.pin26, True)
+        gpio.output(self.pin24, False)
+        gpio.output(self.pin35, True)
+        gpio.output(self.pin22, False)
 
     def pump_water_out(self):
-        gpio.output(self.pin7, False)
-        gpio.output(self.pin8, True)
-        gpio.output(self.pin19, False)
-        gpio.output(self.pin25, True)
+        gpio.output(self.pin26, False)
+        gpio.output(self.pin24, True)
+        gpio.output(self.pin35, False)
+        gpio.output(self.pin22, True)
 
     def close_and_clean(self):
-        gpio.output(self.pin7, False)
-        gpio.output(self.pin8, False)
-        gpio.output(self.pin19, False)
-        gpio.output(self.pin25, False)
+        gpio.output(self.pin26, False)
+        gpio.output(self.pin24, False)
+        gpio.output(self.pin35, False)
+        gpio.output(self.pin22, False)
         gpio.cleanup()
 
 class WaterLevelSensor:
