@@ -1,9 +1,20 @@
-from csi_camera import CSI_Camera
-from time import sleep
+
 import threading
+import cv2
+import numpy as np
+from csi_camera import CSI_Camera
+from time import perf_counter, sleep
+import math
+
 
 show_fps = True
-stop_thread_csi = False
+
+
+def new_red_area_detected(pixel):
+    print("New red area detected : ",pixel)#WRITE COORDİNATES
+
+
+show_fps = True
 
 # Simple draw label on an image; in our case, the video frame
 def draw_label(cv_image, label_text, label_position):
@@ -25,10 +36,6 @@ def read_camera(csi_camera, display_fps):
 
     return camera_image
 
-def new_red_area_detected(pixel):
-    print("New red area detected : ",pixel)#WRITE COORDİNATES
-
-
 cam_H_fov = 62.2 # (deg)
 cam_V_fov = 48.8 # (deg)
 
@@ -44,8 +51,7 @@ SENSOR_MODE_1080 = 2
 # 1280x720, 60 fps
 SENSOR_MODE_720 = 3
 
-RED_AREA_VOLUME = 0
-OLD_RED_AREA_VOLUME = 0
+
 
 def start_camera():
 
@@ -61,6 +67,7 @@ def start_camera():
 
     cam.open(cam.gstreamer_pipeline)
     cam.start()
+    
 
     cv2.namedWindow("CSI Cameras", cv2.WINDOW_AUTOSIZE)
 
@@ -74,61 +81,47 @@ def start_camera():
         # Start counting the number of frames read and displayed
         cam.start_counting_fps()
         while cv2.getWindowProperty("CSI Cameras", 0) >= 0:
-
-            OLD_RED_AREA_VOLUME = RED_AREA_VOLUME
-
+            t1 = perf_counter()
             frame = read_camera(cam, show_fps)
 
             
             cam.frames_displayed += 1
-            
+
+            lower_red2 = np.array([80, 100, 70])
+            upper_red2 = np.array([180, 255, 255])
             hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            mask2 = cv2.inRange(hsv_frame, lower_red2, upper_red2)
+            pxiels = cv2.countNonZero(mask2)
+            cv2.imshow('mask2', mask2)
+            # This also acts as a frame limiter
+            print(pxiels)
+            try:
+                M = cv2.moments(pxiels) #moment is centroid
+                cx,cy = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
+                cv2.circle(frame,(cx,cy),5,(0,0,255),-1)
 
-            # Red Color
-            low_red = np.array([161, 155, 84])
-            high_red = np.array([180, 255, 255])
-            red_mask = cv2.inRange(hsv_frame, low_red, high_red)
-            #red = cv2.bitwise_and(frame, frame, mask=red_mask)
-
-            cv2.imshow("Red", red_mask)
-
-            #Calculate red area
-            RED_AREA_VOLUME = cv2.countNonZero(red_mask)
-
-
-            if(RED_AREA_VOLUME > OLD_RED_AREA_VOLUME):
-                new_red_area_detected(RED_AREA_VOLUME)
-
+            except:
+                print("No center")
+            t2 = perf_counter()
+            #print("time: ", str((t2-t1)*1000))
+            #print("----------------------------------------------")
+            cv2.imshow("CSI Camera", frame)
             # Stop the program on the ESC key
-            if stop_thread_csi == True:
+            if (cv2.waitKey(5) & 0xFF) == 27:
                 break
 
     finally:
         cam.stop()
         cam.release()
-        cv2.destroyAllWindows()
-
+    cv2.destroyAllWindows()
 
 
 def startThread():
     t = threading.Thread(target=start_camera)
 
-    t.daemon = True
-
     t.start()
 
-def stop():
-    stop_thread_csi = True
 
 
-print("Start mission")
 
-i = 0
-while True:
-    print("second :",i)
-    sleep(1)
-    i = i+1
-    if(i == 3):
-        print("start cam")
-        startThread()
-    
+startThread()
