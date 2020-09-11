@@ -117,8 +117,27 @@ drone.log.logger("Stop pumping")
 pump.close_and_clean()
 water_level_sensor.close_and_clean()
 
+###
+### buraya olduğu yerde takeoff 
+### --- go_to deyince çapraz gidiyor, 
+### takılmamız yan yatmamız olası.......
+### hatta su üzerinde takeoff hızını elektronikleri
+### korumak için azaltabiliriz de
+###
 
 drone.go_to_coordinate(MISSION_COORDINATE_RED_AREA)
+#Descend and pump water out
+
+###
+### --- buraya kendini hizalaması gerekiyor
+### tam orataladı dediği zaman inerek 1 kere daha ortalatabiliriz
+### sonrasında hedefin yüksekliği+1metre olacak şekilde 
+### inip hold yapıp boşaltabiliriz.
+### dezavantajımız pervanelerin ya da olası rüzgarın 
+### suyu dağıtabilecek olması 
+###
+
+
 #Descend and pump water out
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
