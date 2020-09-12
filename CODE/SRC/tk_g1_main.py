@@ -73,10 +73,16 @@ for i in range(2):
     #First go straight and pass start/finish line
     drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
 
+    """
     drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
     #These can be done more otonom by only 1 rally point and radius value
     drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
-    
+    """
+
+    drone.right_half_circle(MISSION_COORDINATE_RALLY1,10,MISSION_COORDINATE_HOME)
+
+
+
     #First go to circle then do circle
     drone.go_to_coordinate(MISSION_COORDINATE_BOTTOM_OF_CIRCLE)
 
@@ -86,10 +92,14 @@ for i in range(2):
         MISSION_COORDINATE_HOME #Send home position for yaw calculation
         )
 
-
+    """
     drone.go_to_coordinate(MISSION_COORDINATE_RALLY3)
     #These can be done more otonom by only 1 rally point and radius value
     drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
+    """
+
+    drone.left_half_circle(MISSION_COORDINATE_RALLY3,10,MISSION_COORDINATE_HOME)
+
 
     drone.go_to_coordinate(MISSION_COORDINATE_HOME)
 

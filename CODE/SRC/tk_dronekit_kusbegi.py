@@ -355,7 +355,6 @@ class Kusbegi:
         if (frame == self.frame_local_ned):
             while not (self.at_the_target_yet_ned(xTarget,yTarget)):
                 self.log.logger("Waiting to reach target with ned frame")
-                self.log.write_logs() #DEBUG
                 sleep(1)
 
         self.log.logger("Target reached")
@@ -460,9 +459,7 @@ class Kusbegi:
         #Start circle mode. Select with diameter or 2 coordinates
 
         self.log.logger("Start circle mode")
-        print("X: ",self.vehicle.location.local_frame.north) #Debug
-        print("Y: ",self.vehicle.location.local_frame.east) #Debug
-        print("debug")
+
         self.coordinate.file_dir = homeCoordinate
         x,y,yaw = self.coordinate.read_coordinates()
         yaw_bottom_to_top = yaw
@@ -492,3 +489,78 @@ class Kusbegi:
 
         return True
 
+    def right_half_circle(self,bottomCoordinates,diameter,homeCoordinate):
+        #Do half circle on the right of the homecoordinate
+
+        self.go_to_coordinate(bottomCoordinates)
+
+        self.coordinate.file_dir = homeCoordinate
+        x,y,yaw = self.coordinate.read_coordinates()
+        yaw_bottom_to_top = yaw
+
+        ts_yaw = yaw_bottom_to_top + math.pi/2
+
+
+        x = self.vehicle.location.local_frame.north
+        y = self.vehicle.location.local_frame.east
+
+        self.req_pos_x = x
+        self.req_pos_y = y
+
+        self.req_pos_z = self.default_alt
+
+        self.position_frame = self.frame_local_ned
+
+        ts_n = x
+        ts_e = y
+
+        self.log.logger("Started circle loop")
+
+        alfa = 0 
+
+        while (alfa > -math.pi):
+            sleep(0.3)
+            alfa = alfa - self.circle_step_magnitude
+            n_ned, e_ned = self.body_to_ned_frame( diameter/2 - diameter*math.cos(alfa)/2, - diameter*math.sin(alfa)/2, yaw_bottom_to_top ) 
+            self.req_pos_x = ts_n + n_ned
+            self.req_pos_y = ts_e + e_ned
+            self.req_pos_z = self.default_alt
+            self.req_yaw_ang = ts_yaw + alfa
+
+    def left_half_circle(self,topCoordinates,diameter,homeCoordinate):
+        #Do half circle on the right of the homecoordinate
+
+        self.go_to_coordinate(topCoordinates)
+
+        self.coordinate.file_dir = homeCoordinate
+        x,y,yaw = self.coordinate.read_coordinates()
+        yaw_bottom_to_top = yaw
+
+        ts_yaw = yaw_bottom_to_top - math.pi/2
+
+
+        x = self.vehicle.location.local_frame.north
+        y = self.vehicle.location.local_frame.east
+
+        self.req_pos_x = x
+        self.req_pos_y = y
+
+        self.req_pos_z = self.default_alt
+
+        self.position_frame = self.frame_local_ned
+
+        ts_n = x
+        ts_e = y
+
+        self.log.logger("Started circle loop")
+
+        alfa = 0
+
+        while (alfa < math.pi):
+            sleep(0.3)
+            alfa = alfa + self.circle_step_magnitude
+            n_ned, e_ned = self.body_to_ned_frame( -diameter/2 + diameter*math.cos(alfa)/2, - diameter*math.sin(alfa)/2, yaw_bottom_to_top) 
+            self.req_pos_x = ts_n + n_ned
+            self.req_pos_y = ts_e + e_ned
+            self.req_pos_z = self.default_alt
+            self.req_yaw_ang = ts_yaw - alfa
