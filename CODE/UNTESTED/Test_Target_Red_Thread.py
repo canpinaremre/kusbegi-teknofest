@@ -1,10 +1,3 @@
-# CSI_Camera is a class which encapsulates an OpenCV VideoCapture element
-# The VideoCapture element is initialized via a GStreamer pipeline
-# The camera is read in a separate thread 
-# The class also tracks how many frames are read from the camera;
-# The calling application tracks the frames_displayed
-
-# Let's use a repeating Timer for counting FPS
 import cv2
 import threading
 import math
@@ -164,9 +157,9 @@ class CSI_Camera:
 
 
 
-                if show_fps:
-                    draw_label(self.frame, "Frames Displayed (PS): " + str(self.last_frames_displayed), (10, 20))
-                    draw_label(self.frame, "Frames Read (PS): " + str(self.last_frames_read), (10, 40))
+                if self.show_fps:
+                    self.draw_label(self.frame, "Frames Displayed (PS): " + str(self.last_frames_displayed), (10, 20))
+                    self.draw_label(self.frame, "Frames Read (PS): " + str(self.last_frames_read), (10, 40))
 
                 
                 
@@ -185,8 +178,8 @@ class CSI_Camera:
         # Something bad happened
 
             finally:
-                cam.stop()
-                cam.release()
+                self.stop()
+                self.release()
     
     def read(self):
         with self.read_lock:
@@ -215,7 +208,6 @@ class CSI_Camera:
     def start_counting_fps(self):
         self.fps_timer=RepeatTimer(1.0,self.update_fps_stats)
         self.fps_timer.start()
-
 
     def draw_label(cv_image, label_text, label_position):
         font_face = cv2.FONT_HERSHEY_SIMPLEX
