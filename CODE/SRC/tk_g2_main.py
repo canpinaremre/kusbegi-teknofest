@@ -69,6 +69,10 @@ drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
 drone.go_to_coordinate(MISSION_COORDINATE_POOL)
 
+cam = CSI_Camera()
+cam.open()
+cam.start()
+
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
 #Start opencv
 #!!! SLOW DOWN!!!
