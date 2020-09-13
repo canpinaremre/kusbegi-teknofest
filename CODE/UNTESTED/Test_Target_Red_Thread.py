@@ -2,6 +2,7 @@ import cv2
 import threading
 import math
 import numpy as np
+import time
 
 class RepeatTimer(threading.Timer):
     def run(self):
@@ -26,7 +27,7 @@ class CSI_Camera:
         self.frames_displayed=0
         self.last_frames_read=0
         self.last_frames_displayed=0
-        self.show_fps = True
+        self.show_fps = False
 
         self.contourCenterX = 0
         self.contourCenterY = 0
@@ -83,15 +84,16 @@ class CSI_Camera:
             self.read_thread.start()
         
         return self
-
+    
     def stop(self):
         self.running=False
         self.read_thread.join()
-
+    
     def updateCamera(self):
         # This is the thread to read images from the camera
-        while self.running:
-            try:
+        try:
+            while self.running:
+            
                 grabbed, frame = self.video_capture.read()
                 with self.read_lock:
                     self.grabbed=grabbed
@@ -156,10 +158,10 @@ class CSI_Camera:
                 self.frames_displayed += 1
 
 
+                if self.show_fps:                    
 
-                if self.show_fps:
-                    self.draw_label(self.frame, "Frames Displayed (PS): " + str(self.last_frames_displayed), (10, 20))
-                    self.draw_label(self.frame, "Frames Read (PS): " + str(self.last_frames_read), (10, 40))
+                    self.draw_label(self.frame, ("Frames Displayed (PS): " + str(self.last_frames_displayed)), (10, 20))
+                    self.draw_label(self.frame, ("Frames Read (PS): " + str(self.last_frames_read)), (10, 40))
 
                 
                 
@@ -172,15 +174,19 @@ class CSI_Camera:
                 if (cv2.waitKey(5) & 0xFF) == 27:
                     break
 
-            except RuntimeError:
-                print("Could not read image from camera")
+        except RuntimeError:
+            print("Could not read image from camera")
         # FIX ME - stop and cleanup thread
         # Something bad happened
+        
+        """ 
+        finally:
+            self.stop()
+            self.release()
+        """    
+        
+        #cv2.destroyAllWindows()
 
-            finally:
-                self.stop()
-                self.release()
-    
     def read(self):
         with self.read_lock:
             frame = self.frame.copy()
@@ -209,12 +215,12 @@ class CSI_Camera:
         self.fps_timer=RepeatTimer(1.0,self.update_fps_stats)
         self.fps_timer.start()
 
-    def draw_label(cv_image, label_text, label_position):
+    def draw_label(cv_image, label_text, label_positionX, label_positionY):
         font_face = cv2.FONT_HERSHEY_SIMPLEX
         scale = 0.5
         color = (255, 255, 255)
         # You can get the size of the string with cv2.getTextSize here
-        cv2.putText(cv_image, label_text, label_position, font_face, scale, color, 1, cv2.LINE_AA)
+        cv2.putText(cv_image, label_text, (label_positionX, label_positionY), font_face, scale, color, 1, cv2.LINE_AA)
 
     def getContourCenter(self,  contour):
         M = cv2.moments(contour)
