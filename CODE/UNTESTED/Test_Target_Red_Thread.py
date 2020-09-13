@@ -215,12 +215,12 @@ class CSI_Camera:
         self.fps_timer=RepeatTimer(1.0,self.update_fps_stats)
         self.fps_timer.start()
 
-    def draw_label(cv_image, label_text, label_positionX, label_positionY):
+    def draw_label(self, cv_image, label_text, label_position):
         font_face = cv2.FONT_HERSHEY_SIMPLEX
         scale = 0.5
         color = (255, 255, 255)
         # You can get the size of the string with cv2.getTextSize here
-        cv2.putText(cv_image, label_text, (label_positionX, label_positionY), font_face, scale, color, 1, cv2.LINE_AA)
+        cv2.putText(cv_image, label_text, label_position, font_face, scale, color, 1, cv2.LINE_AA)
 
     def getContourCenter(self,  contour):
         M = cv2.moments(contour)
