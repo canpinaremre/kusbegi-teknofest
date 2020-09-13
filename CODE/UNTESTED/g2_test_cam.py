@@ -11,10 +11,11 @@ while True:
 	print("main", cam.con_area)
 	print("errX", cam.errX)
 	print("errY", cam.errY)
+	"""
 	if cam.frame is not None:
 		
-	cv2.imshow("frame", cam.frame)
-	"""
+		cv2.imshow("frame", cam.frame)
+	
 	if (cv2.waitKey(5) & 0xFF) == 27:
     	break
 	"""
