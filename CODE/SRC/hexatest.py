@@ -6,12 +6,12 @@ from pymavlink import mavutil
 import threading
 from time import sleep, time
 import math
-from Test_Target_Red_Thread import CSI_Camera,
+from Test_Target_Red_Thread import CSI_Camera
 
 #Create drone
 #
 drone = Kusbegi()
-#drone.connection_string = '127.0.0.1:14540'
+drone.connection_string = '127.0.0.1:14540'
 if not (drone.connect_vehicle()):
     exit()
 #
@@ -159,10 +159,10 @@ drone.mode_offboard()
 drone.req_pos_z = MISSION_ALTITUDE
 
 while (abs(drone.pos_z - drone.req_pos_z ) > 0.2):
-    print("     Altitude: ", self.pos_z, " meter")
-    self.log.logger("     Altitude: "+ str(self.pos_z) + " meter")
+    print("     Altitude: ", drone.pos_z, " meter")
+    drone.log.logger("     Altitude: "+ str(drone.pos_z) + " meter")
     sleep(1)
-self.log.logger("Target altitude reached : " + str(req_height))
+drone.log.logger("Target altitude reached : " + str(drone.req_pos_z))
 
 """
 drone.go_to_coordinate(MISSION_COORDINATE_RED_AREA)
@@ -193,7 +193,7 @@ drone.mode_land()
 
 drone.wait_for_land()
 
-drone.disarm
+drone.disarm()
 
 #
 #End of Mission

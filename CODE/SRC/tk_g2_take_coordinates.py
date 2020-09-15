@@ -71,14 +71,14 @@ def wait_key():
 
 file_names = list()
 
-file_names.append( MISSION_COORDINATE_HOME )
+#file_names.append( MISSION_COORDINATE_HOME )
 file_names.append( MISSION_COORDINATE_FINISH )
-file_names.append( MISSION_COORDINATE_RALLY1 )
-file_names.append( MISSION_COORDINATE_POOL )
-file_names.append( MISSION_COORDINATE_RALLY2 )
-file_names.append( MISSION_COORDINATE_RALLY3 )
+#file_names.append( MISSION_COORDINATE_RALLY1 )
+#file_names.append( MISSION_COORDINATE_POOL )
+#file_names.append( MISSION_COORDINATE_RALLY2 )
+#file_names.append( MISSION_COORDINATE_RALLY3 )
 #file_names.append( MISSION_COORDINATE_RED_AREA )
-file_names.append( MISSION_COORDINATE_RALLY4 )
+#file_names.append( MISSION_COORDINATE_RALLY4 )
 
 for name in file_names:
     wait_key()
