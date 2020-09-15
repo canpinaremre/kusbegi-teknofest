@@ -35,8 +35,12 @@ class CSI_Camera:
         self.errX = 0
         self.errY = 0
         self.con_area = 0
-        self.lower_red = np.array([0, 150, 100])
-        self.upper_red = np.array([25, 255, 255])
+        self.lower_red = np.array([0, 50, 50])
+        self.upper_red = np.array([10, 255, 255])
+        
+        #self.lower_red2 = np.array([160, 155, 84])
+        self.lower_red2 = np.array([160, 100, 100])
+        self.upper_red2 = np.array([180, 255, 255])
 
         self.gstreamer_pipeline_string = (
             "nvarguscamerasrc sensor-id=%d sensor-mode=%d ! "
@@ -102,7 +106,11 @@ class CSI_Camera:
 
 
                 hsv_frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
-                imgray = cv2.inRange(hsv_frame, self.lower_red, self.upper_red)
+                red_gray1 = cv2.inRange(hsv_frame, self.lower_red, self.upper_red)
+                red_gray2 = cv2.inRange(hsv_frame, self.lower_red2, self.upper_red2)
+
+                imgray = cv2.bitwise_or(red_gray1, red_gray2)
+                
                 #cv2.imshow("imgray", imgray)
                 
                 kernel = np.ones((3,3), np.uint8)
