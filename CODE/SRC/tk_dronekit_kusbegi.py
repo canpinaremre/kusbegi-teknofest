@@ -564,3 +564,25 @@ class Kusbegi:
             self.req_pos_y = ts_e + e_ned
             self.req_pos_z = self.default_alt
             self.req_yaw_ang = ts_yaw - alfa
+
+    def go_to_coordinate_dont_wait(self,filename):
+        self.coordinate.file_dir = filename
+        x,y,yaw = self.coordinate.read_coordinates()
+
+        self.log.logger("Go to coordinate with file name = " + filename)
+
+        self.position_frame = self.frame_global_relative_alt
+        self.drive_type = self.drive_w_setpnt
+        self.default_alt_global = self.vehicle.location.global_frame.alt
+        #self.vehicle.groundspeed = 0.5
+        #self.vehicle.airspeed = 0.5
+    
+        self.req_pos_x = x
+        self.req_pos_y = y
+        self.req_pos_z = self.default_alt_global
+        self.req_yaw_ang = yaw
+
+        self.log.logger("Target : " + str(x) + " , " + str(y))
+        self.print_status()
+
+        return True

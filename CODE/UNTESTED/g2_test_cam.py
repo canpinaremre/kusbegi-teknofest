@@ -5,7 +5,7 @@ import cv2
 cam = CSI_Camera()
 cam.open()
 cam.start()
-cam.start_counting_fps()
+#cam.start_counting_fps()
 while True:
 
 	print("main", cam.con_area)

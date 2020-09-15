@@ -11,7 +11,7 @@ from Test_Target_Red_Thread import CSI_Camera,
 #Create drone
 #
 drone = Kusbegi()
-drone.connection_string = '127.0.0.1:14540'
+#drone.connection_string = '127.0.0.1:14540'
 if not (drone.connect_vehicle()):
     exit()
 #
@@ -64,7 +64,7 @@ drone.ready_to_takeoff()
 drone.mode_takeoff(MISSION_ALTITUDE) #Takeoff to MISSION_ALTITUDE at MISSION_COORDINATE_HOME
 
 drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
-
+"""
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
 drone.go_to_coordinate(MISSION_COORDINATE_POOL)
@@ -108,10 +108,12 @@ drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
 drone.go_to_coordinate(MISSION_COORDINATE_POOL)
 # Land and pump water in
+"""
 drone.mode_land()
 
 drone.wait_for_land()
 
+"""
 pump = Pump()
 
 water_level_sensor = WaterLevelSensor()
@@ -134,7 +136,7 @@ drone.log.logger("Stop pumping")
 
 pump.close_and_clean()
 water_level_sensor.close_and_clean()
-
+"""
 ###
 ### buraya olduğu yerde takeoff 
 ### --- go_to deyince çapraz gidiyor, 
@@ -142,6 +144,8 @@ water_level_sensor.close_and_clean()
 ### hatta su üzerinde takeoff hızını elektronikleri
 ### korumak için azaltabiliriz de
 ###
+sleep(10)
+
 drone.req_pos_x = drone.vehicle.location.local_frame.north
 drone.req_pos_y = drone.vehicle.location.local_frame.east
 drone.req_pos_z = drone.vehicle.location.local_frame.down
@@ -160,7 +164,7 @@ while (abs(drone.pos_z - drone.req_pos_z ) > 0.2):
     sleep(1)
 self.log.logger("Target altitude reached : " + str(req_height))
 
-
+"""
 drone.go_to_coordinate(MISSION_COORDINATE_RED_AREA)
 #Descend and pump water out
 
@@ -184,6 +188,7 @@ drone.go_to_coordinate(MISSION_COORDINATE_HOME)
 drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
 
 #LAND!
+"""
 drone.mode_land()
 
 drone.wait_for_land()
