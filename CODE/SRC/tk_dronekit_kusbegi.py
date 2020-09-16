@@ -32,7 +32,7 @@ class Kusbegi:
 
         self.distance_tolerance = 1 #meter
         self.distance_tolerance_global = self.distance_tolerance / 1.113195e5
-        self.circle_step_magnitude = 0.07
+        self.circle_step_magnitude = 0.14
 
         self.spd_x = 0.0
         self.spd_y = 0.0
@@ -102,12 +102,12 @@ class Kusbegi:
 
         self.yaw_ang = self.vehicle.attitude.yaw
 
-        self.airspd = round(self.vehicle.groundspeed, 2)
-        self.spd_x = self.vehicle._vx
-        self.spd_y = self.vehicle._vy
+        #self.airspd = round(self.vehicle.groundspeed, 2)
+        #self.spd_x = self.vehicle._vx
+        #self.spd_y = self.vehicle._vy
         
-        self.batt_lvl = self.vehicle._level
-        self.batt_volt = self.vehicle._voltage
+        #self.batt_lvl = self.vehicle._level
+        #self.batt_volt = self.vehicle._voltage
 
     def arm(self):
         #Try arm

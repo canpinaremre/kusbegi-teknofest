@@ -74,11 +74,11 @@ file_names = list()
 file_names.append( MISSION_COORDINATE_HOME )
 file_names.append( MISSION_COORDINATE_FINISH )
 file_names.append( MISSION_COORDINATE_RALLY1 )
-file_names.append( MISSION_COORDINATE_RALLY2 )
+#file_names.append( MISSION_COORDINATE_RALLY2 )
 file_names.append( MISSION_COORDINATE_BOTTOM_OF_CIRCLE )
 #file_names.append( MISSION_COORDINATE_TOP_OF_CIRCLE )
 file_names.append( MISSION_COORDINATE_RALLY3 )
-file_names.append( MISSION_COORDINATE_RALLY4 )
+#file_names.append( MISSION_COORDINATE_RALLY4 )
 
 for name in file_names:
     wait_key()
