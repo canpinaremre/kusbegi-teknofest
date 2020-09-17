@@ -1,0 +1,182 @@
+#UserAccounts - auto login on
+#Brightness & Lock - Turn screen off Never
+			- Require password  Space out box
+
+# remove programs to save space
+sudo apt-get purge libreoffice* -y
+sudo apt-get clean -y
+
+#######
+######update & upgrade
+sudo apt-get update && sudo apt-get upgrade -y
+
+#######
+###### Activate pwm Fan
+sudo sh -c 'echo 255 > /sys/devices/pwm-fan/target_pwm'
+
+######
+##### fan automatic
+#https://github.com/Pyrestone/jetson-fan-ctl
+git clone https://github.com/Pyrestone/jetson-fan-ctl.git
+cd jetson-fan-ctl
+sudo ./install.sh
+
+
+
+#######
+######system-level dependencies
+sudo apt-get install git cmake -y
+sudo apt-get install libatlas-base-dev gfortran -y
+sudo apt-get install libhdf5-serial-dev hdf5-tools -y
+sudo apt-get install python3-dev -y
+sudo apt-get install nano locate -y
+
+sudo apt-get install libfreetype6-dev python3-setuptools -y
+sudo apt-get install protobuf-compiler libprotobuf-dev openssl -y
+sudo apt-get install libssl-dev libcurl4-openssl-dev -y
+sudo apt-get install cython3 -y
+
+sudo apt-get install libxml2-dev libxslt1-dev -y
+
+#######
+######remote control - vnc
+sudo nano /usr/share/glib-2.0/schemas/org.gnome.Vino.gschema.xml
+
+     # paste into opened xml file
+	<key name='enabled' type='b'>
+	<summary>Enable remote access to the desktop</summary>
+	<description>
+	If true, allows remote access to the desktop via the RFB
+	protocol. Users on remote machines may then connect to the
+	desktop using a VNC viewer.
+	</description>
+	<default>true</default>
+	</key>
+
+      #save and exit	
+
+sudo glib-compile-schemas /usr/share/glib-2.0/schemas
+
+# open "desktop sharing" and
+#Tick the “Allow other users to view your desktop” and “Allow other users to control your desktop”
+#Check “You must confirm each access to this machine” is turned off. 
+#Tick the “Require the user to enter this password” checkmark, and enter a password for the VNC session.
+
+# open "Startup Applications"
+# "Add"
+# Name box = Vino
+# Command box = /usr/lib/vino/vino-server &
+# save
+
+
+gsettings set org.gnome.Vino require-encryption false
+gsettings set org.gnome.Vino prompt-enabled false
+
+# Reboot
+
+
+#######
+###### update cmake
+wget https://github.com/Kitware/CMake/releases/download/v3.18.0/cmake-3.18.0.tar.gz
+tar xpvf cmake-3.18.0.tar.gz cmake-3.18.0/
+
+# compile cmake
+cd cmake-3.18.0/
+./bootstrap --system-curl
+make -j4
+
+# update bash profile
+echo 'export PATH=/home/nvidia/cmake-3.18.0/bin/:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+#######
+###### get pip
+
+wget https://bootstrap.pypa.io/get-pip.py
+sudo python3 get-pip.py
+rm get-pip.py
+
+
+#######
+###### set up virtual environment tool
+
+sudo pip install virtualenv virtualenvwrapper
+
+nano ~/.bashrc
+
+# add end of the file then save and exit
+
+	# virtualenv and virtualenvwrapper
+	export WORKON_HOME=$HOME/.virtualenvs
+	export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+	source /usr/local/bin/virtualenvwrapper.sh
+
+source ~/.bashrc
+
+# virtual environment commands
+# 	mkvirtualenv: Create a Python virtual environment
+# 	lsvirtualenv: List virtual environments installed on your system
+# 	rmvirtualenv: Remove a virtual environment
+# 	workon: Activate a Python virtual environment
+# 	deactivate: Exits the virtual environment taking you back to your system environment
+
+# create python virtual environment(py3cv4)
+mkvirtualenv py3cv4 -p python3
+
+# to run a workon
+workon py3cv4
+
+#######
+###### install numpy
+pip install numpy
+
+#######
+###### make python3 selected
+https://raspberry-valley.azurewebsites.net/Python-Default-Version/
+
+######
+##### install jetson_stats
+sudo -H pip install -U jetson-stats
+# to open stats
+jtop
+
+#######
+###### install opencv 4.4
+
+# first add more swap memory
+https://pysource.com/2019/08/26/install-opencv-4-1-on-nvidia-jetson-nano/
+
+# https://github.com/mdegans/nano_build_opencv
+git clone https://github.com/mdegans/nano_build_opencv.git
+cd nano_build_opencv
+# change build_opencv.sh to .txt
+# change JOBS parameter to =4
+# save, exit 
+# change build_opencv.txt to .sh
+./build_opencv.sh
+
+#######
+###### mavlik & dronekit
+http://brisbaneroboticsclub.id.au/connect-nvidia-nano-to-pixhawk/
+
+#######
+###### Visual Studio Code - code-oss
+git clone https://github.com/JetsonHacksNano/installVSCode.git
+cd installVSCode/
+./installVSCode.sh
+
+
+#######
+###### check 
+https://github.com/p1va/jetson-nano-setup
+
+
+
+
+
+
+
+
+
+
+
