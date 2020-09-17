@@ -1,7 +1,7 @@
 from datetime import datetime
 import queue
 from collections import deque
-#import RPi.GPIO as gpio
+import RPi.GPIO as gpio
 
 class CoordinateFile:
     def __init__(self):
@@ -69,14 +69,14 @@ class Pump:
     def pump_water_in(self):
         gpio.output(self.pin26, True)
         gpio.output(self.pin24, False)
-        gpio.output(self.pin35, True)
+        gpio.output(self.pin35, False)
         gpio.output(self.pin22, False)
 
     def pump_water_out(self):
         gpio.output(self.pin26, False)
-        gpio.output(self.pin24, True)
-        gpio.output(self.pin35, False)
-        gpio.output(self.pin22, True)
+        gpio.output(self.pin24, False)
+        gpio.output(self.pin35, True)
+        gpio.output(self.pin22, False)
 
     def close_and_clean(self):
         gpio.output(self.pin26, False)
@@ -109,44 +109,39 @@ class WaterLevelSensor:
         gpio.cleanup()  # clean up at the end of your script
 
     # read SPI data from MCP3008(or MCP3204) chip,8 possible adc's (0 thru 7)
-    def readadc(self):
-
-        if ((self.photo_ch > 7) or (self.photo_ch < 0)):
+    def readadc(self,adcnum, clockpin, mosipin, misopin, cspin):
+        
+        if ((adcnum > 7) or (adcnum < 0)):
             return -1
+        gpio.output(cspin, True)
 
-        gpio.output(self.SPICS, True)
-        gpio.output(self.SPICLK, False)  # start clock low
-        gpio.output(self.SPICS, False)  # bring CS low
+        gpio.output(clockpin, False)  # start clock low
+        gpio.output(cspin, False)  # bring CS low
 
-        commandout = self.photo_ch
+        commandout = adcnum
         commandout |= 0x18  # start bit + single-ended bit
         commandout <<= 3  # we only need to send 5 bits here
-
         for i in range(5):
-
             if (commandout & 0x80):
-                gpio.output(self.SPIMOSI, True)
-            
+                gpio.output(mosipin, True)
             else:
-                gpio.output(self.SPIMOSI, False)
-            
+                gpio.output(mosipin, False)
             commandout <<= 1
-            gpio.output(self.SPICLK, True)
-            gpio.output(self.SPICLK, False)
+            gpio.output(clockpin, True)
+            gpio.output(clockpin, False)
 
         adcout = 0
         # read in one empty bit, one null bit and 10 ADC bits
         for i in range(12):
-            gpio.output(self.SPICLK, True)
-            gpio.output(self.SPICLK, False)
+            gpio.output(clockpin, True)
+            gpio.output(clockpin, False)
             adcout <<= 1
-            if (gpio.input(self.SPIMISO)):
+            if (gpio.input(misopin)):
                 adcout |= 0x1
 
-        gpio.output(self.SPICS, True)
+        gpio.output(cspin, True)
+
         adcout >>= 1  # first bit is 'null' so drop it
+        return adcout
 
-        water_level = round((adcout / 200. * 100), 1)
-
-        return water_level
 

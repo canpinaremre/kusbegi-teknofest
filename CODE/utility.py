@@ -69,14 +69,14 @@ class Pump:
     def pump_water_in(self):
         gpio.output(self.pin26, True)
         gpio.output(self.pin24, False)
-        gpio.output(self.pin35, True)
+        gpio.output(self.pin35, False)
         gpio.output(self.pin22, False)
 
     def pump_water_out(self):
         gpio.output(self.pin26, False)
-        gpio.output(self.pin24, True)
-        gpio.output(self.pin35, False)
-        gpio.output(self.pin22, True)
+        gpio.output(self.pin24, False)
+        gpio.output(self.pin35, True)
+        gpio.output(self.pin22, False)
 
     def close_and_clean(self):
         gpio.output(self.pin26, False)
