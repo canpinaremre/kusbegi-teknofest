@@ -260,9 +260,12 @@ while True:
     forward = 180 - cx
     right = cy- 320
 
-    northgo, eastgo = drone.body_to_ned_frame(forward, right, drone.vehicle.attitude.yaw)
+    dist_V_pixs = 2 * (-1) * drone.pos_z * math.tan(math.radians(48.8 / 2)) / 360
+    dist_H_pixs = 2 * (-1) * drone.pos_z * math.tan(math.radians(62.2 / 2)) / 640
 
-    northgo, eastgo = northgo * 0.002, eastgo * 0.0017
+    northgo, eastgo = drone.body_to_ned_frame(dist_V_pixs*forward, dist_H_pixs*right, drone.vehicle.attitude.yaw)
+
+    
     drone.req_pos_x = drone.req_pos_x + northgo
     drone.req_pos_y = drone.req_pos_y + eastgo
     drone.req_pos_z = drone.req_pos_z + 0.15
