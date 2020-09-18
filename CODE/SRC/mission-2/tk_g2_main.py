@@ -83,7 +83,6 @@ def show_camera():
     else:
         print("Unable to open camera")
 
-print("Başla")
 
 #Create drone
 #
@@ -117,9 +116,12 @@ def listener(self, name, home_position):
 
 #Mission parameters
 #
+MIN_AREA = 500
 MISSION_PUMP_TIMEOUT = 10 #Seconds
-MISSION_MAX_WATER_SENSOR = 300 # ADC max value to stop motors
-MISSION_ALTITUDE = -6 #Down (meters) #Min 4 - max 30 mt
+MISSION_PUMP_TIMEOUT_OUT = 20 #Seconds , disari basma suresi
+MISSION_MAX_WATER_SENSOR = 450 # ADC max value to stop motors
+MISSION_ALTITUDE = -10 #Down (meters) #Min 4 - max 30 mt
+MISSION_ALTITUDE_RED = -6 #After pool
 MISSION_COORDINATE_HOME = 'tk_g2_home.txt' #txt file for coordiantes
 MISSION_COORDINATE_FINISH = 'tk_g2_finish.txt' #txt file for coordiantes
 MISSION_COORDINATE_RALLY1 = 'tk_g2_rally1.txt' #txt file for coordiantes
@@ -140,7 +142,7 @@ drone.ready_to_takeoff()
 
 drone.mode_takeoff(MISSION_ALTITUDE) #Takeoff to MISSION_ALTITUDE at MISSION_COORDINATE_HOME
 
-drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
+#drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
@@ -161,35 +163,34 @@ max_area = 0
 
 while True:
     if not (drone.at_the_target_yet_global(drone.req_pos_x,drone.req_pos_y)):
-        self.log.logger("Not at the target yet with global frame")
+        drone.log.logger("Not at the target yet with global frame")
             
-            if (cam.con_area > max_area):
-                max_area = cam.con_area
-                drone.save_coordinate(MISSION_COORDINATE_RED_AREA)
+        if(area > max_area):
+            max_area = area
+            drone.save_coordinate(MISSION_COORDINATE_RED_AREA)
     else:
         break
 
-
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
 
-drone.go_to_coordinate(MISSION_COORDINATE_HOME)
-
+#drone.go_to_coordinate(MISSION_COORDINATE_HOME)
 
 
 #START TOUR 2
-drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
+#drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
 drone.go_to_coordinate(MISSION_COORDINATE_POOL)
 # Land and pump water in
+
 drone.mode_land()
 
 drone.wait_for_land()
 
 pump = Pump()
 
-water_level_sensor = WaterLevelSensor()
+#sens = WaterLevelSensor()
 
 print("Start pumping")
 drone.log.logger("Start pumping")
@@ -198,17 +199,22 @@ ts = time()
 
 while ( (time()- ts) < MISSION_PUMP_TIMEOUT ):
     pump.pump_water_in()
-
-    if (water_level_sensor.readadc > MISSION_MAX_WATER_SENSOR):
+    sleep(0.1)
+    drone.log.logger("pumping in")
+    #sens_value = sens.readadc(sens.photo_ch, sens.SPICLK, sens.SPIMOSI, sens.SPIMISO, sens.SPICS)
+    #print(sens_value)
+    """
+    if (sens_value > MISSION_MAX_WATER_SENSOR):
         print("Water level reached!")
         drone.log.logger("Water level reached!")
         break
+    """
 
 print("Stop pumping")
 drone.log.logger("Stop pumping")
 
 pump.close_and_clean()
-water_level_sensor.close_and_clean()
+#sens.close_and_clean()
 
 ###
 ### buraya olduğu yerde takeoff 
@@ -224,36 +230,77 @@ drone.req_pos_z = drone.vehicle.location.local_frame.down
 drone.drive_type = drone.drive_w_setpnt
 drone.position_frame = drone.frame_local_ned
 
-drone.ready_to_takeoff()
+#drone.ready_to_takeoff()
 drone.mode_offboard()
+
+drone.req_pos_z = MISSION_ALTITUDE_RED
+
+while (abs(drone.pos_z - drone.req_pos_z ) > 0.2):
+    print("     Altitude: ", drone.pos_z, " meter")
+    drone.log.logger("     Altitude: "+ str(drone.pos_z) + " meter")
+    sleep(1)
+drone.log.logger("Target altitude reached : " + str(drone.req_pos_z))
+
+
+drone.go_to_coordinate(MISSION_COORDINATE_RED_AREA)
+
+#IN THIS POINT SWITCH TO NED FRAME
+drone.position_frame = drone.frame_local_ned
+drone.drive_type = drone.drive_w_setpnt
+
+drone.req_pos_x = drone.vehicle.location.local_frame.north
+drone.req_pos_y = drone.vehicle.location.local_frame.east
+drone.req_pos_z = MISSION_ALTITUDE_RED
+
+# 640,360
+
+while True:
+    if(area < MIN_AREA):
+        continue
+    forward = 180 - cx
+    right = cy- 320
+
+    northgo, eastgo = drone.body_to_ned_frame(forward, right, drone.vehicle.attitude.yaw)
+
+    northgo, eastgo = northgo * 0.002, eastgo * 0.0017
+    drone.req_pos_x = drone.req_pos_x + northgo
+    drone.req_pos_y = drone.req_pos_y + eastgo
+    drone.req_pos_z = drone.req_pos_z + 0.15
+    sleep(1)
+    if(drone.req_pos_z >= RED_PUMP_OUT_HEIGHT):
+        break
+
+
+#Descend and pump water out
+pump2 = Pump()
+
+ts = time()
+
+while( (time()- ts) < MISSION_PUMP_TIMEOUT_OUT ):
+    pump2.pump_water_out()
+    sleep(0.5)
+    print("pumping in")
+    """
+    sens_value = sens.readadc(sens.photo_ch, sens.SPICLK, sens.SPIMOSI, sens.SPIMISO, sens.SPICS)
+    print(sens_value)
+    """
+
+print("Stop pumping")
+pump2.close_and_clean()
 
 drone.req_pos_z = MISSION_ALTITUDE
 
 while (abs(drone.pos_z - drone.req_pos_z ) > 0.2):
-    print("     Altitude: ", self.pos_z, " meter")
-    self.log.logger("     Altitude: "+ str(self.pos_z) + " meter")
+    print("     Altitude: ", drone.pos_z, " meter")
+    drone.log.logger("     Altitude: "+ str(drone.pos_z) + " meter")
     sleep(1)
-self.log.logger("Target altitude reached : " + str(req_height))
+drone.log.logger("Target altitude reached : " + str(drone.req_pos_z))
 
 
-drone.go_to_coordinate(MISSION_COORDINATE_RED_AREA)
-#Descend and pump water out
-
-###
-### --- buraya kendini hizalaması gerekiyor
-### tam orataladı dediği zaman inerek 1 kere daha ortalatabiliriz
-### sonrasında hedefin yüksekliği+1metre olacak şekilde 
-### inip hold yapıp boşaltabiliriz.
-### dezavantajımız pervanelerin ya da olası rüzgarın 
-### suyu dağıtabilecek olması 
-###
-
-
-#Descend and pump water out
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
 
-drone.go_to_coordinate(MISSION_COORDINATE_HOME)
+#drone.go_to_coordinate(MISSION_COORDINATE_HOME)
 
 #GO TO FINISH
 drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
@@ -263,7 +310,7 @@ drone.mode_land()
 
 drone.wait_for_land()
 
-drone.disarm
+drone.disarm()
 
 #
 #End of Mission
