@@ -56,11 +56,16 @@ def show_camera():
         # Window
         while cv2.getWindowProperty("CSI Camera", 0) >= 0:
             ret_val, img = cap.read()
+            lower_red = np.array([0, 150, 50])
+            upper_red = np.array([5, 255, 155])
             lower_red2 = np.array([161, 155, 84])
             upper_red2 = np.array([180, 255, 255])
             hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            mask = cv2.inRange(hsv_frame, lower_red2, upper_red2)
-            cv2.imshow("CSI Camera", mask)
+            mask1 = cv2.inRange(hsv_frame, lower_red2, upper_red2)
+            mask2 = cv2.inRange(hsv_frame, lower_red, upper_red)
+            mask = cv2.bitwise_or(mask1, mask2)
+
+            #cv2.imshow("CSI Camera", mask)
             M = cv2.moments(mask) #moment is centroid
             try:
                 cx,cy = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
@@ -69,8 +74,8 @@ def show_camera():
             
             
 
-            cv2.circle(img,(cx,cy),5,(0,0,255),-1)
-            cv2.imshow("Real", img)
+            #cv2.circle(img,(cx,cy),5,(0,0,255),-1)
+            #cv2.imshow("Real", img)
             area = cv2.countNonZero(mask)
             #print(area)
             # This also acts as
@@ -87,7 +92,7 @@ def show_camera():
 #Create drone
 #
 drone = Kusbegi()
-drone.connection_string = '127.0.0.1:14540'
+#drone.connection_string = '127.0.0.1:14540'
 if not (drone.connect_vehicle()):
     exit()
 #
@@ -117,6 +122,7 @@ def listener(self, name, home_position):
 #Mission parameters
 #
 MIN_AREA = 500
+RED_PUMP_OUT_HEIGHT = -3
 MISSION_PUMP_TIMEOUT = 10 #Seconds
 MISSION_PUMP_TIMEOUT_OUT = 20 #Seconds , disari basma suresi
 MISSION_MAX_WATER_SENSOR = 450 # ADC max value to stop motors
@@ -157,7 +163,7 @@ drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
 
 
 drone.go_to_coordinate_dont_wait(MISSION_COORDINATE_RALLY3)
-sleep(0.31)
+
 
 max_area = 0
 
