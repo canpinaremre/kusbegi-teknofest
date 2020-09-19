@@ -45,6 +45,15 @@ def gstreamer_pipeline(
         )
     )
 
+lr1 = np.array([0, 150, 50])
+ur1 = np.array([5, 255, 155])
+lr2 = np.array([161, 155, 84])
+ur2 = np.array([180, 255, 255])
+
+lb1 = np.array([180, 255, 255])
+ub1 = np.array([180, 255, 255])
+lb2 = np.array([180, 255, 255])
+ub2 = np.array([180, 255, 255])
 
 def show_camera():
     global cx,cy,area
@@ -56,10 +65,10 @@ def show_camera():
         # Window
         while cv2.getWindowProperty("CSI Camera", 0) >= 0:
             ret_val, img = cap.read()
-            lower_red = np.array([0, 150, 50])
-            upper_red = np.array([5, 255, 155])
-            lower_red2 = np.array([161, 155, 84])
-            upper_red2 = np.array([180, 255, 255])
+            lower_red = lb1
+            upper_red = ub1
+            lower_red2 = lb2
+            upper_red2 = ub2
             hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             mask1 = cv2.inRange(hsv_frame, lower_red2, upper_red2)
             mask2 = cv2.inRange(hsv_frame, lower_red, upper_red)
@@ -97,7 +106,8 @@ if not (drone.connect_vehicle()):
     exit()
 #
 #End of Create drone
-
+cam_th = threading.Thread(target=show_camera)
+cam_th.start()
 
 #Listeners
 #
@@ -153,10 +163,6 @@ drone.mode_takeoff(MISSION_ALTITUDE) #Takeoff to MISSION_ALTITUDE at MISSION_COO
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
 drone.go_to_coordinate(MISSION_COORDINATE_POOL)
-
-
-msg_thread = threading.Thread(target=show_camera)
-msg_thread.start()
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
 #Detect red
