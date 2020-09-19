@@ -46,7 +46,7 @@ class Kusbegi:
         # do not forget to restore default 0 (rad) after use
         self.req_yaw_ang = 0.0
         
-        #self.drive_w_speed = 0b101111000111
+        self.drive_w_speed = 0b101111000111
         self.drive_w_setpnt = 0b101111111000
         self.frame_local_ned = mavutil.mavlink.MAV_FRAME_LOCAL_NED
         self.frame_global_relative_alt = mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT
@@ -178,7 +178,7 @@ class Kusbegi:
                 self.position_frame,
                 self.drive_type,
                 self.req_pos_x, self.req_pos_y, self.req_pos_z, # NED!
-                0, 0, 0, # NED!
+                self.req_pos_x, self.req_pos_y, self.req_pos_z, # NED!
                 0, 0, 0,
                 self.req_yaw_ang, 0)
 
@@ -314,7 +314,7 @@ class Kusbegi:
 
         self.position_frame = self.frame_global_relative_alt
         self.drive_type = self.drive_w_setpnt
-        self.default_alt_global = self.vehicle.location.global_frame.alt
+        #self.default_alt_global = self.vehicle.location.global_frame.alt
         #self.vehicle.groundspeed = 0.5
         #self.vehicle.airspeed = 0.5
 

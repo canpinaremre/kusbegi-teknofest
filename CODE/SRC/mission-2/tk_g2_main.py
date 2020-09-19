@@ -45,18 +45,11 @@ def gstreamer_pipeline(
         )
     )
 
-lr1 = np.array([0, 150, 50])
-ur1 = np.array([5, 255, 155])
-lr2 = np.array([161, 155, 84])
-ur2 = np.array([180, 255, 255])
-
-lb1 = np.array([180, 255, 255])
-ub1 = np.array([180, 255, 255])
-lb2 = np.array([180, 255, 255])
-ub2 = np.array([180, 255, 255])
-
+color_red = 5
+color_blue = 3
+blue_or_red = color_red
 def show_camera():
-    global cx,cy,area
+    global cx,cy,area,blue_or_red,color_blue,color_red
     # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
     print(gstreamer_pipeline(flip_method=0))
     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
@@ -65,15 +58,20 @@ def show_camera():
         # Window
         while cv2.getWindowProperty("CSI Camera", 0) >= 0:
             ret_val, img = cap.read()
-            lower_red = lb1
-            upper_red = ub1
-            lower_red2 = lb2
-            upper_red2 = ub2
-            hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            mask1 = cv2.inRange(hsv_frame, lower_red2, upper_red2)
-            mask2 = cv2.inRange(hsv_frame, lower_red, upper_red)
-            mask = cv2.bitwise_or(mask1, mask2)
-
+            if(blue_or_red == color_red):
+                lower_red = np.array([0, 150, 50])
+                upper_red = np.array([5, 255, 155])
+                lower_red2 = np.array([161, 155, 84])
+                upper_red2 = ur2 = np.array([180, 255, 255])
+                hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                mask1 = cv2.inRange(hsv_frame, lower_red2, upper_red2)
+                mask2 = cv2.inRange(hsv_frame, lower_red, upper_red)
+                mask = cv2.bitwise_or(mask1, mask2)
+            else if(blue_or_red == color_blue):
+                lb1 = np.array([90, 0, 50])
+                ub1 = np.array([131, 255, 255])
+                hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                mask = cv2.inRange(hsv_frame, lb1, ub1)
             #cv2.imshow("CSI Camera", mask)
             M = cv2.moments(mask) #moment is centroid
             try:
@@ -134,7 +132,7 @@ def listener(self, name, home_position):
 MIN_AREA = 500
 RED_PUMP_OUT_HEIGHT = -3
 MISSION_PUMP_TIMEOUT = 10 #Seconds
-MISSION_PUMP_TIMEOUT_OUT = 20 #Seconds , disari basma suresi
+MISSION_PUMP_TIMEOUT_OUT = 15 #Seconds , disari basma suresi
 MISSION_MAX_WATER_SENSOR = 450 # ADC max value to stop motors
 MISSION_ALTITUDE = -10 #Down (meters) #Min 4 - max 30 mt
 MISSION_ALTITUDE_RED = -6 #After pool
@@ -153,25 +151,54 @@ MISSION_COORDINATE_RALLY4  = 'tk_g2_rally4.txt' #txt file for coordiantes
 #Start of Mission
 #
 drone.default_alt = MISSION_ALTITUDE
-
+drone.position_frame = drone.frame_local_ned
 drone.ready_to_takeoff()
 
 drone.mode_takeoff(MISSION_ALTITUDE) #Takeoff to MISSION_ALTITUDE at MISSION_COORDINATE_HOME
-
+drone.default_alt_global = drone.vehicle.location.global_frame.alt
 #drone.go_to_coordinate(MISSION_COORDINATE_FINISH)
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
-drone.go_to_coordinate(MISSION_COORDINATE_POOL)
+#drone.go_to_coordinate(MISSION_COORDINATE_POOL)
+"""
+drone.drive_type = drone.drive_w_setpnt
+drone.position_frame = drone.frame_local_ned
+drone.req_pos_x = drone.pos_x
+drone.req_pos_y = drone.pos_y
+drone.req_pos_z = drone.pos_z
 
+sleep(2)
+drone.req_pos_z = MISSION_ALTITUDE_RED
+
+
+while (abs(drone.pos_z - drone.req_pos_z ) > 0.2):    
+    sleep(0.2)
+
+drone.default_alt_global =drone.vehicle.location.global_frame.alt
+"""
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
-#Detect red
+#yaw icin biraz bekle
 
 
-drone.go_to_coordinate_dont_wait(MISSION_COORDINATE_RALLY3)
+#drone.go_to_coordinate_dont_wait(MISSION_COORDINATE_RALLY3)
+drone.drive_type = drone.drive_w_speed
+drone.position_frame = drone.frame_local_ned
+drone.req_pos_x = 0
+drone.req_pos_y = 0
+drone.req_pos_z = 0
 
+forward_speed = 1
+sleep(1)
 
+ned_n,ned_e = drone.body_to_ned_frame(forward_speed,0,drone.yaw_ang)
+
+drone.req_pos_x = ned_n
+drone.req_pos_y = ned_e
+
+drone.distance_tolerance = 6
 max_area = 0
+blue_or_red = color_red
 
 while True:
     if not (drone.at_the_target_yet_global(drone.req_pos_x,drone.req_pos_y)):
@@ -182,6 +209,8 @@ while True:
             drone.save_coordinate(MISSION_COORDINATE_RED_AREA)
     else:
         break
+
+drone.distance_tolerance = 1
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
 
@@ -194,7 +223,51 @@ drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
 drone.go_to_coordinate(MISSION_COORDINATE_POOL)
-# Land and pump water in
+
+
+blue_or_red = color_blue
+
+drone.position_frame = drone.frame_local_ned
+drone.drive_type = drone.drive_w_speed
+
+drone.req_pos_x = 0
+drone.req_pos_y = 0
+drone.req_pos_z = 0
+
+# 640,360
+sleep(1)
+while True:
+    
+    if(area < MIN_AREA):
+        drone.req_pos_x = 0
+        drone.req_pos_y = 0
+        drone.req_pos_z = 0
+        continue
+    
+    forward = 180 - cy
+    right = cx - 320
+
+     
+
+    dist_V_pixs = 0.0025 #* 2 * (-1) * drone.pos_z * math.tan(math.radians(48.8 / 2)) / 360
+    dist_H_pixs = 0.0025 #* 2 * (-1) * drone.pos_z * math.tan(math.radians(62.2 / 2)) / 640
+
+    northgo, eastgo = drone.body_to_ned_frame(dist_V_pixs*forward, dist_H_pixs*right, drone.vehicle.attitude.yaw)
+    print("north: ",northgo, "-  east: ", eastgo)
+    if abs(northgo)*0.7 <= (0.08):
+        northgo = 0.0
+    if abs(eastgo)*0.7 <= (0.08):
+        eastgo = 0.0
+    drone.req_pos_x = 0.7*northgo
+    drone.req_pos_y = 0.7*eastgo
+    drone.req_pos_z = 0.15
+
+    if drone.pos_z >= -4:
+        drone.req_pos_x = 0
+        drone.req_pos_y = 0
+        drone.req_pos_z = 0
+        break
+
 
 drone.mode_land()
 
@@ -256,34 +329,52 @@ drone.log.logger("Target altitude reached : " + str(drone.req_pos_z))
 
 drone.go_to_coordinate(MISSION_COORDINATE_RED_AREA)
 
-#IN THIS POINT SWITCH TO NED FRAME
-drone.position_frame = drone.frame_local_ned
-drone.drive_type = drone.drive_w_setpnt
+blue_or_red = color_red
 
-drone.req_pos_x = drone.vehicle.location.local_frame.north
-drone.req_pos_y = drone.vehicle.location.local_frame.east
-drone.req_pos_z = MISSION_ALTITUDE_RED
+drone.position_frame = drone.frame_local_ned
+drone.drive_type = drone.drive_w_speed
+
+drone.req_pos_x = 0
+drone.req_pos_y = 0
+drone.req_pos_z = 0
 
 # 640,360
+sleep(1)
 
 while True:
+    
     if(area < MIN_AREA):
+        drone.req_pos_x = 0
+        drone.req_pos_y = 0
+        drone.req_pos_z = 0
         continue
-    forward = 180 - cx
-    right = cy- 320
+    
+    forward = 180 - cy
+    right = cx - 320
 
-    dist_V_pixs = 2 * (-1) * drone.pos_z * math.tan(math.radians(48.8 / 2)) / 360
-    dist_H_pixs = 2 * (-1) * drone.pos_z * math.tan(math.radians(62.2 / 2)) / 640
+     
+
+    dist_V_pixs = 0.0025 #* 2 * (-1) * drone.pos_z * math.tan(math.radians(48.8 / 2)) / 360
+    dist_H_pixs = 0.0025 #* 2 * (-1) * drone.pos_z * math.tan(math.radians(62.2 / 2)) / 640
 
     northgo, eastgo = drone.body_to_ned_frame(dist_V_pixs*forward, dist_H_pixs*right, drone.vehicle.attitude.yaw)
+    print("north: ",northgo, "-  east: ", eastgo)
+    if abs(northgo)*0.7 <= (0.08):
+        northgo = 0.0
+    if abs(eastgo)*0.7 <= (0.08):
+        eastgo = 0.0
+    drone.req_pos_x = 0.7*northgo
+    drone.req_pos_y = 0.7*eastgo
+    drone.req_pos_z = 0.15
 
-    
-    drone.req_pos_x = drone.req_pos_x + northgo
-    drone.req_pos_y = drone.req_pos_y + eastgo
-    drone.req_pos_z = drone.req_pos_z + 0.15
-    sleep(1)
-    if(drone.req_pos_z >= RED_PUMP_OUT_HEIGHT):
+    if drone.pos_z >= RED_PUMP_OUT_HEIGHT:
+        drone.position_frame = drone.frame_local_ned
+        drone.drive_type = drone.drive_w_setpnt
+        drone.req_pos_x = drone.pos_x
+        drone.req_pos_y = drone.pos_y
+        drone.req_pos_z = RED_PUMP_OUT_HEIGHT
         break
+
 
 
 #Descend and pump water out
@@ -311,6 +402,7 @@ while (abs(drone.pos_z - drone.req_pos_z ) > 0.2):
     sleep(1)
 drone.log.logger("Target altitude reached : " + str(drone.req_pos_z))
 
+drone.default_alt_global= drone.vehicle.location.global_frame.alt
 
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
