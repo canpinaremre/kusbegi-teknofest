@@ -200,8 +200,9 @@ drone.distance_tolerance = 9
 max_area = 0
 blue_or_red = color_red
 
+
 while True:
-    if not (drone.at_the_target_yet_global(drone.req_pos_x,drone.req_pos_y)):
+    if not (drone.at_the_target_yet_global(37.0749168,37.276977)):
         drone.log.logger("Not at the target yet with global frame")
             
         if(area > max_area):
