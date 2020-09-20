@@ -1,0 +1,80 @@
+9:5:32- Logger initialized
+9:5:34- Home = LocationLocal:north=-0.385505348443985,east=0.4709470570087433,down=-0.49678048491477966
+9:5:34- Connected on: /dev/ttyTHS1
+9:5:34- Ready to takeoff!
+9:5:34- Print Status and write logs
+9:5:34-  Armed: False
+9:5:34-  System status: STANDBY
+9:5:34-  GPS: GPSInfo:fix=3,num_sat=10
+9:5:34-  Alt: 0.145
+9:5:34- Burkut setpoint buffer thread activated
+9:5:34- Try Arm
+9:5:34- Home position not set!
+9:5:35- Home position not set!
+9:5:36- Home position not set!
+9:5:37- Home position not set!
+9:5:38- Home position not set!
+9:5:39- Home position not set!
+9:5:40- Home position not set!
+9:5:41- Home position not set!
+9:5:42- Trying arming
+9:5:42- Trying arming
+9:5:42- Trying arming
+9:5:43- VEHICLE ARMED!
+9:5:43- Home Location(-0.2133491486310959, 0.37599867582321167, -0.45920491218566895)
+9:5:43- Try mode OFFBOARD
+9:5:43- Waiting offboard mode
+9:5:43- Waiting offboard mode
+9:5:43- Waiting offboard mode
+9:5:43- Mode : OFFBOARD!
+9:5:43- Print Status and write logs
+9:5:43-  Armed: True
+9:5:43-  System status: ACTIVE
+9:5:43-  GPS: GPSInfo:fix=3,num_sat=11
+9:5:43-  Alt: -0.065
+9:5:43- Initialising: TAKEOFF
+9:5:43-      Altitude: -0.45920491218566895 meter
+9:5:44-      Altitude: -0.416998952627182 meter
+9:5:45-      Altitude: -0.3965473771095276 meter
+9:5:46-      Altitude: -0.5132173299789429 meter
+9:5:47-      Altitude: -1.700927972793579 meter
+9:5:48-      Altitude: -4.315062046051025 meter
+9:5:49-      Altitude: -6.864234447479248 meter
+9:5:50-      Altitude: -8.925055503845215 meter
+9:5:51- Target altitude reached : -10
+9:5:51- Go to coordinate with file name = tk_g2_rally1.txt
+9:5:51- Target : 37.0741559 , 37.2768689
+9:5:51- Not at the target yet with global frame
+9:5:52- Not at the target yet with global frame
+9:5:53- Not at the target yet with global frame
+9:5:54- Not at the target yet with global frame
+9:5:55- Not at the target yet with global frame
+9:5:56- Not at the target yet with global frame
+9:5:57- Not at the target yet with global frame
+9:5:58- Not at the target yet with global frame
+9:5:59- Not at the target yet with global frame
+9:6:0- Not at the target yet with global frame
+9:6:1- Not at the target yet with global frame
+9:6:2- Not at the target yet with global frame
+9:6:3- Target point reached
+9:6:3- Target reached : 37.0741533 , 37.2768745
+9:6:3- Print Status and write logs
+9:6:3-  Armed: True
+9:6:3-  System status: ACTIVE
+9:6:3-  GPS: GPSInfo:fix=3,num_sat=12
+9:6:3-  Alt: 10.057
+9:6:5- Go to coordinate with file name = tk_g2_rally2.txt
+9:6:5- Target : 37.0743844 , 37.2769945
+9:6:5- Not at the target yet with global frame
+9:6:6- Not at the target yet with global frame
+9:6:7- Not at the target yet with global frame
+9:6:8- Not at the target yet with global frame
+9:6:9- Not at the target yet with global frame
+9:6:10- Not at the target yet with global frame
+9:6:11- Target point reached
+9:6:11- Target reached : 37.074386 , 37.2769919
+9:6:11- Print Status and write logs
+9:6:11-  Armed: True
+9:6:11-  System status: ACTIVE
+9:6:11-  GPS: GPSInfo:fix=3,num_sat=12
+9:6:11-  Alt: 9.043
