@@ -196,7 +196,7 @@ ned_n,ned_e = drone.body_to_ned_frame(forward_speed,0,drone.yaw_ang)
 drone.req_pos_x = ned_n
 drone.req_pos_y = ned_e
 
-drone.distance_tolerance = 8
+drone.distance_tolerance = 9
 max_area = 0
 blue_or_red = color_red
 
