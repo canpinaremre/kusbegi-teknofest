@@ -1,7 +1,7 @@
 from datetime import datetime
 import queue
 from collections import deque
-import RPi.GPIO as gpio
+#import RPi.GPIO as gpio
 
 class CoordinateFile:
     def __init__(self):

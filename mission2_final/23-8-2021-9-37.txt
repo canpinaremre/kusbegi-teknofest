@@ -1,0 +1,9 @@
+9:37:54- Logger initialized
+9:37:55- Home = LocationLocal:north=-0.02904905565083027,east=0.0017073494382202625,down=0.004066649358719587
+9:37:55- Connected on: 127.0.0.1:14540
+9:37:55- Ready to takeoff!
+9:37:55- Print Status and write logs
+9:37:55-  Armed: False
+9:37:55-  System status: STANDBY
+9:37:55-  GPS: GPSInfo:fix=3,num_sat=10
+9:37:55-  Alt: 0.002
