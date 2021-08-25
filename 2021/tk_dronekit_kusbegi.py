@@ -353,6 +353,16 @@ class Kusbegi:
         result = math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
         self.log.logger("Distance is " + str(result) + " meters" )
         return result
+    
+    def local_to_global(self,north,east):
+        lat = self.vehicle.location.global_frame.lat + (north / 1.113195e5)
+        lon = self.vehicle.location.global_frame.lon + (east / 1.113195e5)
+        return lat,lon
+
+    def body_to_global(self,forward,right):
+        N,E = self.body_to_ned_frame(forward,right,self.vehicle.attitude.yaw)
+        lat,lon = self.local_to_global(N,E)
+        return lat,lon
 
     def body_to_ned_frame(self,xBody,yBody,yawBody):
         #Convert body frame to ned frame

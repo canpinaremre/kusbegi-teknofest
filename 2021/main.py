@@ -58,6 +58,16 @@ sleep(2)
 drone.set_mode("LOITER")
 drone.pause_offboard()
 
+#body drive test
+target = drone.vehicle.location.global_frame
+
+target.lat,target.lon = drone.body_to_global(5,0)
+
+drone.reposition(target,0)
+sleep(100)
+
+
+
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY3)
