@@ -7,7 +7,12 @@ from time import sleep, time
 import math
 
 
-
+MISSION_COORDINATE_HOME = 'tk_g1_home.txt' #txt file for coordiantes
+MISSION_COORDINATE_FINISH = 'tk_g1_finish.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY1 = 'tk_g1_rally1.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY2  = 'tk_g1_rally2.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY3  = 'tk_g1_rally3.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY4  = 'tk_g1_rally4.txt' #txt file for coordiantes
 
 drone = Kusbegi()
 drone.connection_string = '127.0.0.1:14540'
@@ -48,8 +53,27 @@ drone.req_pos_z = 0
 
 print("sleep 2 sec")
 sleep(2)
-setSpeed = 5
 
+
+drone.set_mode("LOITER")
+drone.pause_offboard()
+
+drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
+drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
+drone.go_to_coordinate(MISSION_COORDINATE_RALLY3)
+drone.go_to_coordinate(MISSION_COORDINATE_RALLY4)
+
+
+drone.go_to_coordinate_dont_wait(MISSION_COORDINATE_RALLY1)
+sleep(2)
+drone.go_to_coordinate_dont_wait(MISSION_COORDINATE_RALLY2)
+sleep(1)
+drone.go_to_coordinate_dont_wait(MISSION_COORDINATE_RALLY3)
+sleep(1)
+drone.go_to_coordinate_dont_wait(MISSION_COORDINATE_RALLY4)
+
+sleep(9999)
+setSpeed = 5
 while(1):
     while(drone.req_pos_x < setSpeed):
         drone.req_pos_x = drone.req_pos_x + 0.08

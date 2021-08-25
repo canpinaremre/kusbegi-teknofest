@@ -1,0 +1,28 @@
+15:42:58- Logger initialized
+15:42:58- Home = LocationLocal:north=-0.0032851274590939283,east=0.00829237513244152,down=0.0147447120398283
+15:42:58- Connected on: 127.0.0.1:14540
+15:42:58- Ready to takeoff!
+15:42:58- Print Status and write logs
+15:42:58-  Armed: False
+15:42:58-  System status: STANDBY
+15:42:58-  GPS: GPSInfo:fix=3,num_sat=10
+15:42:58-  Alt: -0.006
+15:42:58- Burkut setpoint buffer thread activated
+15:42:58- Try Arm
+15:42:58- Home position not set!
+15:42:59- Trying arming
+15:42:59- Trying arming
+15:43:0- Trying arming
+15:43:0- Trying arming
+15:43:0- VEHICLE ARMED!
+15:43:0- Home Location(-0.007971467450261116, -0.00025059637846425176, 0.012354318983852863)
+15:43:0- Try mode OFFBOARD
+15:43:0- Waiting offboard mode
+15:43:1- Waiting offboard mode
+15:43:1- Waiting offboard mode
+15:43:1- Mode : OFFBOARD!
+15:43:1- Print Status and write logs
+15:43:1-  Armed: True
+15:43:1-  System status: ACTIVE
+15:43:1-  GPS: GPSInfo:fix=3,num_sat=10
+15:43:1-  Alt: 0.004

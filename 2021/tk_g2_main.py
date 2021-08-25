@@ -1,5 +1,5 @@
 from tk_dronekit_kusbegi import Kusbegi
-from utility import WaterLevelSensor, Pump
+from utility import Pump
 
 from dronekit import connect, LocationLocal, VehicleMode, Battery, SystemStatus
 from pymavlink import mavutil
@@ -9,8 +9,8 @@ import math
 
 
 
-import cv2
-import numpy as np
+# import cv2
+# import numpy as np
 
 # gstreamer_pipeline returns a GStreamer pipeline for capturing from the CSI camera
 # Defaults to 1280x720 @ 60fps
@@ -18,94 +18,94 @@ import numpy as np
 # display_width and display_height determine the size of the window on the screen
 
 cx,cy,area = 0,0,0
-def gstreamer_pipeline(
-    capture_width=1280,
-    capture_height=720,
-    display_width=640,
-    display_height=360,
-    framerate=60,
-    flip_method=0,
-):
-    return (
-        "nvarguscamerasrc ! "
-        "video/x-raw(memory:NVMM), "
-        "width=(int)%d, height=(int)%d, "
-        "format=(string)NV12, framerate=(fraction)%d/1 ! "
-        "nvvidconv flip-method=%d ! "
-        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
-        "videoconvert ! "
-        "video/x-raw, format=(string)BGR ! appsink"
-        % (
-            capture_width,
-            capture_height,
-            framerate,
-            flip_method,
-            display_width,
-            display_height,
-        )
-    )
+# def gstreamer_pipeline(
+#     capture_width=1280,
+#     capture_height=720,
+#     display_width=640,
+#     display_height=360,
+#     framerate=60,
+#     flip_method=0,
+# ):
+#     return (
+#         "nvarguscamerasrc ! "
+#         "video/x-raw(memory:NVMM), "
+#         "width=(int)%d, height=(int)%d, "
+#         "format=(string)NV12, framerate=(fraction)%d/1 ! "
+#         "nvvidconv flip-method=%d ! "
+#         "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+#         "videoconvert ! "
+#         "video/x-raw, format=(string)BGR ! appsink"
+#         % (
+#             capture_width,
+#             capture_height,
+#             framerate,
+#             flip_method,
+#             display_width,
+#             display_height,
+#         )
+#     )
 
-color_red = 5
-color_blue = 3
-blue_or_red = color_red
-def show_camera():
-    global cx,cy,area,blue_or_red,color_blue,color_red
-    # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
-    print(gstreamer_pipeline(flip_method=0))
-    cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
-    if cap.isOpened():
-        window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
-        # Window
-        while cv2.getWindowProperty("CSI Camera", 0) >= 0:
-            ret_val, img = cap.read()
-            if(blue_or_red == color_red):
-                lower_red = np.array([0, 150, 50])
-                upper_red = np.array([5, 255, 155])
-                lower_red2 = np.array([161, 155, 84])
-                upper_red2 = ur2 = np.array([180, 255, 255])
-                hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-                mask1 = cv2.inRange(hsv_frame, lower_red2, upper_red2)
-                mask2 = cv2.inRange(hsv_frame, lower_red, upper_red)
-                mask = cv2.bitwise_or(mask1, mask2)
-            else if(blue_or_red == color_blue):
-                lb1 = np.array([90, 0, 50])
-                ub1 = np.array([131, 255, 255])
-                hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-                mask = cv2.inRange(hsv_frame, lb1, ub1)
-            #cv2.imshow("CSI Camera", mask)
-            M = cv2.moments(mask) #moment is centroid
-            try:
-                cx,cy = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
-            except:
-                cx,cy = 0,0
+# color_red = 5
+# color_blue = 3
+# blue_or_red = color_red
+# def show_camera():
+#     global cx,cy,area,blue_or_red,color_blue,color_red
+#     # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
+#     print(gstreamer_pipeline(flip_method=0))
+#     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+#     if cap.isOpened():
+#         window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
+#         # Window
+#         while cv2.getWindowProperty("CSI Camera", 0) >= 0:
+#             ret_val, img = cap.read()
+#             if(blue_or_red == color_red):
+#                 lower_red = np.array([0, 150, 50])
+#                 upper_red = np.array([5, 255, 155])
+#                 lower_red2 = np.array([161, 155, 84])
+#                 upper_red2 = ur2 = np.array([180, 255, 255])
+#                 hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+#                 mask1 = cv2.inRange(hsv_frame, lower_red2, upper_red2)
+#                 mask2 = cv2.inRange(hsv_frame, lower_red, upper_red)
+#                 mask = cv2.bitwise_or(mask1, mask2)
+#             else if(blue_or_red == color_blue):
+#                 lb1 = np.array([90, 0, 50])
+#                 ub1 = np.array([131, 255, 255])
+#                 hsv_frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+#                 mask = cv2.inRange(hsv_frame, lb1, ub1)
+#             #cv2.imshow("CSI Camera", mask)
+#             M = cv2.moments(mask) #moment is centroid
+#             try:
+#                 cx,cy = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
+#             except:
+#                 cx,cy = 0,0
             
             
 
-            #cv2.circle(img,(cx,cy),5,(0,0,255),-1)
-            #cv2.imshow("Real", img)
-            area = cv2.countNonZero(mask)
-            #print(area)
-            # This also acts as
-            keyCode = cv2.waitKey(30) & 0xFF
-            # Stop the program on the ESC key
-            if keyCode == 27:
-                break
-        cap.release()
-        cv2.destroyAllWindows()
-    else:
-        print("Unable to open camera")
+#             #cv2.circle(img,(cx,cy),5,(0,0,255),-1)
+#             #cv2.imshow("Real", img)
+#             area = cv2.countNonZero(mask)
+#             #print(area)
+#             # This also acts as
+#             keyCode = cv2.waitKey(30) & 0xFF
+#             # Stop the program on the ESC key
+#             if keyCode == 27:
+#                 break
+#         cap.release()
+#         cv2.destroyAllWindows()
+#     else:
+#         print("Unable to open camera")
 
 
 #Create drone
 #
 drone = Kusbegi()
-#drone.connection_string = '127.0.0.1:14540'
+drone.connection_string = '127.0.0.1:14540'
 if not (drone.connect_vehicle()):
     exit()
 #
 #End of Create drone
-cam_th = threading.Thread(target=show_camera)
-cam_th.start()
+# cam_th = threading.Thread(target=show_camera)
+# cam_th.start()
 
 #Listeners
 #
@@ -160,23 +160,7 @@ drone.default_alt_global = drone.vehicle.location.global_frame.alt
 
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY1)
 
-#drone.go_to_coordinate(MISSION_COORDINATE_POOL)
-"""
-drone.drive_type = drone.drive_w_setpnt
-drone.position_frame = drone.frame_local_ned
-drone.req_pos_x = drone.pos_x
-drone.req_pos_y = drone.pos_y
-drone.req_pos_z = drone.pos_z
 
-sleep(2)
-drone.req_pos_z = MISSION_ALTITUDE_RED
-
-
-while (abs(drone.pos_z - drone.req_pos_z ) > 0.2):    
-    sleep(0.2)
-
-drone.default_alt_global =drone.vehicle.location.global_frame.alt
-"""
 drone.go_to_coordinate(MISSION_COORDINATE_RALLY2)
 #yaw icin biraz bekle
 

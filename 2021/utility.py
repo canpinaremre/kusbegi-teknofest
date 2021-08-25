@@ -45,7 +45,7 @@ class Log:
 
     def create_file_w_date(self):
         file_name_date = self.create_file_name_date()
-        file_name1 = file_name_date + ".txt"
+        file_name1 = "2021/logs/" + file_name_date + ".txt"
         file_date = open(file_name1, "w+")
         file_date.close()
         return file_name1
@@ -84,64 +84,4 @@ class Pump:
         gpio.output(self.pin35, False)
         gpio.output(self.pin22, False)
         gpio.cleanup()
-
-class WaterLevelSensor:
-    def __init__(self):
-        self.SPICLK = 13
-        self.SPIMISO = 21
-        self.SPIMOSI = 19
-        self.SPICS = 16
-
-        self.photo_ch = 0
-        self.set_level_sensor_GPIOs()
-
-    def set_level_sensor_GPIOs(self):
-        gpio.setwarnings(False)
-        gpio.setmode(gpio.BOARD)  # to specify whilch pin numbering system
-        # set up the SPI interface pins
-        gpio.setup(self.SPIMOSI, gpio.OUT)
-        gpio.setup(self.SPIMISO, gpio.IN)
-        gpio.setup(self.SPICLK, gpio.OUT)
-        gpio.setup(self.SPICS, gpio.OUT)
-        
-
-    def close_and_clean(self):
-        gpio.cleanup()  # clean up at the end of your script
-
-    # read SPI data from MCP3008(or MCP3204) chip,8 possible adc's (0 thru 7)
-    def readadc(self,adcnum, clockpin, mosipin, misopin, cspin):
-        
-        if ((adcnum > 7) or (adcnum < 0)):
-            return -1
-        gpio.output(cspin, True)
-
-        gpio.output(clockpin, False)  # start clock low
-        gpio.output(cspin, False)  # bring CS low
-
-        commandout = adcnum
-        commandout |= 0x18  # start bit + single-ended bit
-        commandout <<= 3  # we only need to send 5 bits here
-        for i in range(5):
-            if (commandout & 0x80):
-                gpio.output(mosipin, True)
-            else:
-                gpio.output(mosipin, False)
-            commandout <<= 1
-            gpio.output(clockpin, True)
-            gpio.output(clockpin, False)
-
-        adcout = 0
-        # read in one empty bit, one null bit and 10 ADC bits
-        for i in range(12):
-            gpio.output(clockpin, True)
-            gpio.output(clockpin, False)
-            adcout <<= 1
-            if (gpio.input(misopin)):
-                adcout |= 0x1
-
-        gpio.output(cspin, True)
-
-        adcout >>= 1  # first bit is 'null' so drop it
-        return adcout
-
 
