@@ -264,10 +264,18 @@ class Kusbegi:
         return True
 
     def pause_offboard(self):
-        self.pause_offboard = True
+        self.pauseOffboard = True
 
     def continue_offboard(self):
-        self.pause_offboard = False
+        self.drive_type = self.drive_w_speed
+        self.position_frame = self.frame_local_ned
+        self.req_pos_x = 0
+        self.req_pos_y = 0
+        self.req_pos_z = 0
+        self.req_yaw_ang = self.vehicle.attitude.yaw
+        self.pauseOffboard = False
+        sleep(1)
+        self.mode_offboard()
 
     # düzelt
     def start_drive(self):
@@ -334,6 +342,15 @@ class Kusbegi:
         self.print_status()
 
         return True
+
+    def go_to_body_frame(self,x,y,yaw):
+        # FORWARD, RIGHT, YAW
+        target = self.vehicle.location.global_frame
+
+        target.lat,target.lon = self.body_to_global(x,y)
+
+        self.reposition(target,yaw)
+
     
     def get_distance_metres(self,aLocation1, aLocation2):
         #Get distance between 2 global location coordinate in meters
@@ -352,6 +369,12 @@ class Kusbegi:
         dlong = lon_aLocation2 - lon_aLocation1
         result = math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
         self.log.logger("Distance is " + str(result) + " meters" )
+        return result
+    
+    def target_distance_global(self,lat,lon):
+        dlat = lat - self.vehicle.location.global_relative_frame.lat
+        dlong = lon - self.vehicle.location.global_relative_frame.lon
+        result = math.sqrt((dlat*dlat) + (dlong*dlong)) * 1.113195e5
         return result
     
     def local_to_global(self,north,east):
@@ -374,6 +397,7 @@ class Kusbegi:
 
     def at_the_target_yet_global(self,xTarget,yTarget):
         #Wait for reaching target with global frame
+        self.distance_tolerance_global = self.distance_tolerance / 1.113195e5
 
         if (abs(xTarget-self.vehicle.location.global_relative_frame.lat) < self.distance_tolerance_global):
             if(abs(yTarget-self.vehicle.location.global_relative_frame.lon) < self.distance_tolerance_global):
@@ -412,3 +436,10 @@ class Kusbegi:
         self.log.logger("Target : " + str(lat) + " , " + str(lon))
 
         return True
+
+    def drive_speed_yaw(self,speed,yaw):
+        self.req_pos_x = speed * math.cos(yaw)
+        self.req_pos_y = speed * math.sin(yaw)
+        self.req_yaw_ang = yaw
+
+

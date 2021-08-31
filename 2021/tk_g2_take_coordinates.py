@@ -10,7 +10,7 @@ import math
 #Create drone
 #
 drone = Kusbegi()
-#drone.connection_string = '127.0.0.1:14540'
+drone.connection_string = '127.0.0.1:14540'
 if not (drone.connect_vehicle()):
     exit()
 #
@@ -40,15 +40,16 @@ def listener(self, name, home_position):
 
 #Mission parameters
 #
-MISSION_ALTITUDE = -10 #Down (meters)
-MISSION_COORDINATE_HOME = 'tk_g2_home.txt' #txt file for coordiantes
-MISSION_COORDINATE_FINISH = 'tk_g2_finish.txt' #txt file for coordiantes
-MISSION_COORDINATE_RALLY1 = 'tk_g2_rally1.txt' #txt file for coordiantes
-MISSION_COORDINATE_POOL = 'tk_g2_pool.txt' #txt file for coordiantes
-MISSION_COORDINATE_RED_AREA = 'tk_g2_red_area.txt' #txt file for coordiantes
-MISSION_COORDINATE_RALLY2  = 'tk_g2_rally2.txt' #txt file for coordiantes
-MISSION_COORDINATE_RALLY3  = 'tk_g2_rally3.txt' #txt file for coordiantes
-MISSION_COORDINATE_RALLY4  = 'tk_g2_rally4.txt' #txt file for coordiantes
+MISSION_COORDINATE_HOME    = 'tk_home.txt' #txt file for coordiantes
+MISSION_COORDINATE_FINISH  = 'tk_finish.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY1  = 'tk_rally1.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY2  = 'tk_rally2.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY3  = 'tk_rally3.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY4  = 'tk_rally4.txt' #txt file for coordiantes
+MISSION_RED_START          = 'tk_red_start.txt'
+MISSION_RED_STOP           = 'tk_red_stop.txt'
+MISSION_POOL               = 'tk_pool.txt'
+MISSION_RED_AREA           = 'tk_red_area.txt'
 #
 #End of Mission parameters
 
@@ -69,21 +70,32 @@ def wait_key():
 #
 #End of Def
 
+MISSION_COORDINATE_HOME    = 'tk_home.txt' #txt file for coordiantes
+MISSION_COORDINATE_FINISH  = 'tk_finish.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY1  = 'tk_rally1.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY2  = 'tk_rally2.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY3  = 'tk_rally3.txt' #txt file for coordiantes
+MISSION_COORDINATE_RALLY4  = 'tk_rally4.txt' #txt file for coordiantes
+MISSION_RED_START          = 'tk_red_start.txt'
+MISSION_RED_STOP           = 'tk_red_stop.txt'
+MISSION_POOL               = 'tk_pool.txt'
+MISSION_RED_AREA           = 'tk_red_area.txt'
+
 file_names = list()
 
 file_names.append( MISSION_COORDINATE_HOME )
 file_names.append( MISSION_COORDINATE_FINISH )
+file_names.append( MISSION_POOL )
 file_names.append( MISSION_COORDINATE_RALLY1 )
-file_names.append( MISSION_COORDINATE_POOL )
 file_names.append( MISSION_COORDINATE_RALLY2 )
+file_names.append( MISSION_RED_START )
+file_names.append( MISSION_RED_AREA )
+file_names.append( MISSION_RED_STOP )
 file_names.append( MISSION_COORDINATE_RALLY3 )
-#file_names.append( MISSION_COORDINATE_RED_AREA )
 file_names.append( MISSION_COORDINATE_RALLY4 )
 
 for name in file_names:
     wait_key()
-    #drone.coordinate.file_dir = name
-    #drone.coordinate.write_coordinates(drone.vehicle.location.global_relative_frame.lat, drone.vehicle.location.global_relative_frame.lon, drone.vehicle.attitude.yaw)
     drone.save_coordinate(name)
     print("Coordiante saved for file : ",name)
 print("Done")
