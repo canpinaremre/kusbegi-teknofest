@@ -443,3 +443,40 @@ class Kusbegi:
         self.req_yaw_ang = yaw
 
 
+    def wait_for_circle(self,bottomCoordinates,diameter):
+        #Wait until circle is done
+
+        self.log.logger("Wait until circle is done")
+        
+        self.coordinate.file_dir = bottomCoordinates
+        lat,lon,yawBody = self.coordinate.read_coordinates()
+
+        #self.go_to_coordinate(bottomCoordinates)
+
+
+        targetGlobal = self.vehicle.location.global_frame
+        yaw_s = yawBody
+        Beta = 0
+        yBody = 0
+        xBody = 0
+       
+        while(Beta <= 2 * math.pi):
+            xBody = diameter - (diameter * math.cos(Beta))
+            yBody = -diameter * math.sin(Beta)
+            
+
+            north =  (xBody * math.cos(yawBody) ) - ( yBody * math.sin(yawBody) )
+            east =  (xBody * math.sin(yawBody) ) + ( yBody * math.cos(yawBody) )
+
+            targetGlobal.lat = lat + (north / 1.113195e5)
+            targetGlobal.lon = lon + (east / 1.113195e5)
+            
+
+            self.reposition(targetGlobal,yaw_s)
+        
+            sleep(0.1)
+            Beta = Beta + (math.pi / 180)
+
+
+        self.log.logger("Break circle loop. End of mode circle")
+        return True
