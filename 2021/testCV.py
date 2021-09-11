@@ -1,8 +1,58 @@
-import math
+# sudo -E python3 testCV.py 
 
+from dronekit import connect, LocationLocal, LocationGlobalRelative
+from pymavlink import mavutil
+import threading
+
+import math
 import cv2
 import numpy as np
 import time
+
+
+connection_string = "/dev/serial0"
+#connection_string = '127.0.0.1:14540'
+vehicle = connect(connection_string, baud=57600)
+
+def send(red_x,red_y,red_size):
+    vehicle._master.mav.command_long_send(
+                1,  # autopilot system id
+                1,    # autopilot component id
+                35,   # command id, 35 = VEHICLE_CMD_DO_KUSBEGI
+                0,    # confirmation
+                red_x,    # param1
+                red_y,    # param2
+                red_size, # param3
+                0,  # param4
+                0,  # param5
+                0,  # param6
+                0    # param7
+        )
+
+
+def get_message():
+    while(1):
+        state = vehicle.parameters['NAV_FW_ALT_RAD']
+        param = vehicle.parameters['NAV_FW_ALTL_RAD'] # comfirm
+
+        if((state == 1) and (param == 0)): #take water
+            #take water
+            print("take water")
+            #TODO
+
+        elif((state == 2) and (param == 0)): #dump water
+            #dump water
+            print("dump water")
+            #TODO
+        else:
+            #Secure everything
+            time.sleep(1)
+            print("state:",state)
+        time.sleep(1)
+
+mission_thread = threading.Thread(target=get_message)
+mission_thread.start()
+
 
 #color settings
 hue_lower = 160
@@ -25,15 +75,14 @@ value_upper2 = 255
 min_contour_area = 200 # the smallest number of pixels in a contour before it will register this as a target
 
 #camera
-horizontal_fov = 118.2 * math.pi/180
-vertical_fov = 69.5 * math.pi/180
-horizontal_resolution = 1280
-vertical_resolution = 720
+
+horizontal_resolution = 640
+vertical_resolution = 480
 
 camera = cv2.VideoCapture(0)
 
 
-time.sleep(3)
+time.sleep(1)
 
 while(1):
     _,capture = camera.read()
@@ -69,13 +118,18 @@ while(1):
     if biggest_contour_centroid is not None:
         cv2.circle(capture,biggest_contour_centroid,5,(255,0,0),-1)
         x,y = biggest_contour_centroid
-        #SEND
+        body_right = (x - horizontal_resolution/2) / (horizontal_resolution/2) * 10
+        body_forward = (vertical_resolution/2 - y) / (vertical_resolution/2) * 10
+        size = contour_sizes[biggest_contour_index] / 1000
+        #TODO:
+        send(body_forward,body_right,size)
+        print("size: ",size)
+        print("forward: ",body_forward)
+        print("right: ",body_right)
     
-    cv2.imshow('capture',capture) 
-    cv2.imshow('inrangepixels',inrangepixels)
+    #cv2.imshow('capture',capture) 
+    #cv2.imshow('inrangepixels',inrangepixels)
         
-    if cv2.waitKey(1) == 27:
-        break
     
 cv2.destroyAllWindows()
 camera.release()
